@@ -1,0 +1,48 @@
+﻿@model IEnumerable<test2.Models.Client>
+
+@{
+    var client = Model.FirstOrDefault();
+}
+
+<form action="" method="post">
+    <div class="container" style="width:90vw">
+        <!-- 租借資訊 -->
+        <!-- 租借項目|抬頭 -->
+        <div class="container-fluid card col-8 shadow-lg rounded-5 p-5" style="width:100%">
+            <table class="table table-striped table-hover align-middle" style="table-layout: fixed;">
+                <thead class="table-light text-center">
+                    <tr>
+                        <th>封面</th>
+                        <th>書名</th>
+                        <th>作者</th>
+                        <th>借閱日期</th>
+                        <th>歸還期限</th>
+                        <th>狀態</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    @foreach (var borrow in client!.Borrows)
+                    {
+                        var collection = borrow!.Book!.Collection;
+
+                        <tr>
+                            <td>
+                                @if (collection.CollectionImg != null)
+                                {
+                                    <img src="data:image/*; base64, @(Convert.ToBase64String(collection.CollectionImg))" class="img-thumbnail" style="width: 60px; height: 80px; object-fit: cover;" />
+                                }
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => collection!.Title)</td>
+                            <td>@Html.DisplayFor(modelItem => collection!.Author.Author1)</td>
+                            <td>@Html.DisplayFor(modelItem => borrow!.BorrowDate)</td>
+                            <td>@Html.DisplayFor(modelItem => borrow!.DueDateB)</td>
+                            <td><span class="badge bg-secondary" style="font-size: 1rem">@Html.DisplayFor(modelItem => borrow!.BorrowStatus.BorrowStatus1)</span></td>
+                            <td><button class="badge btn btn-danger  bi-heart-fill btn-form" style="font-size: 1rem"> 加入最愛</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,21 @@
+﻿<div class="row">
+    <div class="col-5 my-1">
+        <h1>還書模式</h1>
+        <hr />
+        <form id="ReturnBookIdForm" class="mt-5">
+            <label class="fs-3" for="ReturnBookID">書籍編號:</label>
+            <div class="input-group">
+                <input class="form-control" id="ReturnBookID" type="text" placeholder="輸入書籍編號" name="ReturnBookID" />
+                <button class="btn btn-outline-secondary" type="button" id="ReturnBook_CancelBookNumBtn">&times;</button>
+            </div>
+            <div class="my-4">
+                <button id="ReturnBookBtn" type="button" class="btn btn-success btn-lg">
+                    歸還
+                </button>
+            </div>
+        </form>
+        <div id="ReturnBookContent" class="mt-2">
+            @*回傳結果*@
+        </div>
+    </div>
+</div>
