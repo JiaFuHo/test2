@@ -37,24 +37,28 @@ namespace test2.Areas.Frontend.Controllers
                 ModelState.AddModelError("", "帳號不正確");
                 return View("LoginC", model);
             }
-
-            if (!Argon2.Verify(guest.CPassword, model.Password))
+            else if (!Argon2.Verify(guest.CPassword, model.Password))
             {
                 ModelState.AddModelError("", "密碼不正確");
                 return View("LoginC", model);
             }
+            else
+            {
+                var borrowCount = await _context.Borrows.CountAsync(x => x.CId == guest.CId);
 
-            var guestClaim = new List<Claim>{
+                var guestClaim = new List<Claim>{
                 new Claim(ClaimTypes.Name, guest.CAccount),
                 new Claim(ClaimTypes.NameIdentifier, guest.CId.ToString()),
-                new Claim("Name", guest.CName)
-            };
+                new Claim("Name", guest.CName),
+                new Claim("BorrowCount", borrowCount.ToString())
+                };
 
-            var guessAccess = new ClaimsIdentity(guestClaim, CookieAuthenticationDefaults.AuthenticationScheme);
+                var guessAccess = new ClaimsIdentity(guestClaim, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(guessAccess));
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(guessAccess));
 
-            return RedirectToAction("Index", "Home", new { area = "Frontend" });
+                return RedirectToAction("Index", "Home", new { area = "Frontend" });
+            }
         }
 
         [HttpGet]
@@ -73,30 +77,33 @@ namespace test2.Areas.Frontend.Controllers
                 ModelState.AddModelError("", "帳號不正確");
                 return View("LoginM", model);
             }
-
-            if (!Argon2.Verify(guest.CPassword, model.Password))
+            else if (!Argon2.Verify(guest.CPassword, model.Password))
             {
                 ModelState.AddModelError("", "密碼不正確");
                 return View("LoginM", model);
             }
-
-            if (guest.Permission < 2) { return RedirectToAction("Index", "Home", new { area = "Frontend" }); }
-
-            var guestClaim = new List<Claim>{
+            else if (guest.Permission < 2)
+            {
+                return RedirectToAction("Index", "Home", new { area = "Frontend" });
+            }
+            else
+            {
+                var guestClaim = new List<Claim>{
                 new Claim(ClaimTypes.Name, guest.CAccount),
                 new Claim(ClaimTypes.NameIdentifier, guest.CId.ToString()),
                 new Claim("Name", guest.CName),
                 new Claim("Permission", guest.Permission.ToString())
-            };
+                };
 
-            if (guest.Permission == 2) { guestClaim.Add(new Claim(ClaimTypes.Role, "Admin")); }
-            if (guest.Permission == 3) { guestClaim.Add(new Claim(ClaimTypes.Role, "SuperAdmin")); }
+                if (guest.Permission == 2) { guestClaim.Add(new Claim(ClaimTypes.Role, "Admin")); }
+                if (guest.Permission == 3) { guestClaim.Add(new Claim(ClaimTypes.Role, "SuperAdmin")); }
 
-            var guessAccess = new ClaimsIdentity(guestClaim, CookieAuthenticationDefaults.AuthenticationScheme);
+                var guessAccess = new ClaimsIdentity(guestClaim, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(guessAccess));
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(guessAccess));
 
-            return RedirectToAction("Index", "Manage", new { area = "Backend" });
+                return RedirectToAction("Index", "Manage", new { area = "Backend" });
+            }
         }
 
         [HttpPost]

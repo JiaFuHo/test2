@@ -49,22 +49,22 @@
                 </thead>
                 <tbody>
                     <tr class="align-middle">
-                        <td>@Html.DisplayFor(modelItem => collection!.CollectionId)</td>
+                        <td id="td_Q">@Html.DisplayFor(modelItem => collection!.CollectionId)</td>
                         <td>@Html.DisplayFor(modelItem => collection!.Title)</td>
                         <td>@Html.DisplayFor(modelItem => collection!.Isbn)</td>
                         <td>@Html.DisplayFor(modelItem => collection!.Type.Type1)</td>
                         @{
                             var totalCount = 0;
-                            var bookCount = 0;
+                            var borrowCount = 0;
 
                             foreach (var book in collection!.Books)
                             {
-                                if (book.BookStatusId == 2) { bookCount++; }
+                                if (book.BookStatusId == 2) { borrowCount++; }
 
                                 totalCount++;
                             }
 
-                            if (bookCount == totalCount)
+                            if (borrowCount == totalCount)
                             {
                                 <td>借閱中</td>
                                 <td>@totalCount</td>

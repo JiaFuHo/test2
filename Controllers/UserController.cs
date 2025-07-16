@@ -10,9 +10,11 @@ namespace test2.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier);
             var userName = User.FindFirst("Name");
+            var userBorrow = User.FindFirst("BorrowCount");
 
             ViewData["UserId"] = (userId != null) ? userId.Value : string.Empty;
             ViewData["UserName"] = (userName != null) ? userName.Value : string.Empty;
+            ViewData["UserBorrow"] = (userBorrow != null) ? userBorrow.Value : string.Empty;
 
             base.OnActionExecuting(context);
         }

@@ -57,7 +57,29 @@
                             </table>
                         </div>
                         <div class="col-3 col-lg-2 d-flex flex-column" style="align-items: start; justify-content:end">
-                            <button type="button" class="btn mt-0 btn_book1 w-75 mb-3">借閱</button>
+                            <input type="text" value="@Html.DisplayFor(modelItem => book.CollectionId)" class="d-none box_collection" />
+
+                            @{
+                                var totalCount = 0;
+                                var borrowCount = 0;
+
+                                foreach (var collection in book!.Books)
+                                {
+                                    if (collection.BookStatusId == 2) { borrowCount++; }
+
+                                    totalCount++;
+                                }
+
+                                if (borrowCount == totalCount)
+                                {
+                                    <button type="button" class="btn mt-0 btn_book1 w-75 mb-3">預約</button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn mt-0 btn_book1 w-75 mb-3">借閱</button>
+                                }
+                            }
+
                             <button type="button" class="btn mt-0 btn_book2 w-75 mb-3">更多</button>
                         </div>
                     </div>

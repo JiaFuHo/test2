@@ -35,8 +35,8 @@ namespace test2.Areas.Frontend.Controllers
         [HttpGet]
         public IActionResult Index() { return View(); }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Query(string query1, string type1, string query2, string year1, string year2, string lang, string type2, string status)
         {
             if (string.IsNullOrEmpty(query1)) { query1 = string.Empty; }
@@ -91,7 +91,7 @@ namespace test2.Areas.Frontend.Controllers
 
         public async Task<IActionResult> Collection(string type, string author, string publisher, string lang, string year1, string year2)
         {
-            IQueryable<Collection> collection = _context.Collections.Include(x => x.Author).Include(x => x.Language).Include(x => x.Type);
+            IQueryable<Collection> collection = _context.Collections.Include(x => x.Author).Include(x => x.Language).Include(x => x.Type).Include(x => x.Books);
 
             bool x = int.TryParse(year1, out int yearX);
             bool y = int.TryParse(year2, out int yearY);
@@ -104,6 +104,28 @@ namespace test2.Areas.Frontend.Controllers
             if (y) { collection = collection.Where(i => i.PublishDate.Year <= yearY); }
 
             return View(await collection.ToListAsync());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reserve(string user, string collection, string status)
+        {
+            int.TryParse(user, out int cId);
+            int.TryParse(collection, out int collectionId);
+
+            var reservation = new Reservation
+            {
+                CId = cId,
+                CollectionId = collectionId,
+                ReservationDate = DateTime.Now,
+                ReservationStatusId = 2
+            };
+
+            _context.Reservations.Add(reservation!);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(status == "C" ? "Collection" : "Query");
         }
 
         [HttpGet]

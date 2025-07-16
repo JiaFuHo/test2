@@ -79,12 +79,30 @@ $(() => {
 
     //_book
     $(".btn_book1").on("click", function () {
-        let boxBook = $(this).closest(".box_book");
-        let bookTable = boxBook.find("table");
-        let bookTitle = bookTable.find("h4").text();
+        let borrowCount = parseInt($("#box_borrow").val(), 10);
 
-        $("#box_search").val(bookTitle)
-        $("#btn_search1").trigger("click")
+        $("#box_statusR").val("C")
+
+        if ($("#id_user").val() === "") {
+            let loginC = $(".btn_guideLC").attr("href");
+
+            alert("請先登入")
+
+            window.location.href = loginC
+        }
+        else if (borrowCount == 5) {
+            alert("請先還書，借閱書籍不可超過5本")
+        }
+        else {
+            let collectionId = $(this).closest(".col-3").find(".box_collection").val();
+            let status = $(this).closest(".col-3").find(".btn_book1").text();
+
+            if (status === "借閱") { alert("借閱成功，需在3天內前往取書") }
+            else { alert("預約成功，可取書時將發送通知") }
+
+            $("#id_collection").val(collectionId)
+            $("#btn_reserveS").trigger("click")
+        }
     })
 
     $(".btn_book2").on("click", function () {
