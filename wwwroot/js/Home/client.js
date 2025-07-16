@@ -138,6 +138,24 @@ $("#cancelPhoneBtn").on("click", () => {
     $("#phoneInput1").addClass("d-none").val($("#phoneDisplay").text())
 })
 
+$(".btn_cFav").on("click", function () {
+    let collectionId = $(this).closest("tr").find(".td_Fav").text().trim();
+
+    alert("變更已儲存")
+
+    $("#collectionIdInput1").val(collectionId)
+    $("#btn_cFavS").trigger("click")
+})
+
+$(".btn_dFav").on("click", function () {
+    let collectionId = $(this).closest("tr").find(".td_Fav").text().trim();
+
+    alert("變更已儲存")
+
+    $("#collectionIdInput2").val(collectionId)
+    $("#btn_dFavS").trigger("click")
+})
+
 //訊息頁刪除功能
 function deleteRow(button) {
     const row = button.closest("tr");

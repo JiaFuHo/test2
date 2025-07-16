@@ -2,10 +2,10 @@
 
 namespace test2.Models
 {
-    public class PhoneC
+    public class FavotiteC
     {
         [Key]
         public string cId { get; set; } = string.Empty;
-        public string cPhone { get; set; } = string.Empty;
+        public string collectionId { get; set; } = string.Empty;
     }
 }

@@ -32,9 +32,11 @@ namespace test2.Areas.Frontend.Controllers
         #endregion
 
         #region action
+        [HttpGet]
         public IActionResult Index() { return View(); }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Query(string query1, string type1, string query2, string year1, string year2, string lang, string type2, string status)
         {
             if (string.IsNullOrEmpty(query1)) { query1 = string.Empty; }
@@ -104,6 +106,7 @@ namespace test2.Areas.Frontend.Controllers
             return View(await collection.ToListAsync());
         }
 
+        [HttpGet]
         public async Task<IActionResult> Client()
         {
             var userNameX = Convert.ToString(ViewData["UserName"]);
@@ -134,20 +137,67 @@ namespace test2.Areas.Frontend.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdatePhone(string idInput2, string phoneInput2)
         {
             int.TryParse(idInput2, out int cId);
 
-            await _context.Database.ExecuteSqlInterpolatedAsync($"EXEC pr_updatePhone {cId}, {phoneInput2}");
+            //await _context.Database.ExecuteSqlInterpolatedAsync($"EXEC pr_updatePhone {cId}, {phoneInput2}");
 
-            var userPhoneX = await _context.Clients.Include(x => x.Borrows).ThenInclude(y => y.BorrowStatus)
-                                                                              .Include(w => w.Borrows).ThenInclude(x => x.Book).ThenInclude(y => y.Collection).ThenInclude(z => z.Author)
-                                                                              .Include(x => x.Borrows).ThenInclude(y => y.Histories)
-                                                                              .Include(x => x.Favorites).ThenInclude(y => y.Collection).ThenInclude(z => z.Author)
-                                                                              .Include(x => x.Notifications)
-                                                                              .AsNoTracking().FirstOrDefaultAsync(i => i.CId == cId);
+            //var userPhoneX = await _context.Clients.Include(x => x.Borrows).ThenInclude(y => y.BorrowStatus)
+            //                                                                  .Include(w => w.Borrows).ThenInclude(x => x.Book).ThenInclude(y => y.Collection).ThenInclude(z => z.Author)
+            //                                                                  .Include(x => x.Borrows).ThenInclude(y => y.Histories)
+            //                                                                  .Include(x => x.Favorites).ThenInclude(y => y.Collection).ThenInclude(z => z.Author)
+            //                                                                  .Include(x => x.Notifications)
+            //                                                                  .AsNoTracking().FirstOrDefaultAsync(i => i.CId == cId);
 
-            return RedirectToAction("Client", new List<Client> { userPhoneX! });
+            //return RedirectToAction("Client", new List<Client> { userPhoneX! });
+
+            var userId = await _context.Clients.FindAsync(cId);
+
+            userId!.CPhone = phoneInput2;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Client");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateFavorite(string idInput3, string collectionIdInput1)
+        {
+            int.TryParse(idInput3, out int cId);
+            int.TryParse(collectionIdInput1, out int collectionId);
+
+            var favorites = new Favorite
+            {
+                CId = cId,
+                CollectionId = collectionId
+            };
+
+            _context.Favorites.Add(favorites!);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Client");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteFavorite(string idInput4, string collectionIdInput2)
+        {
+            int.TryParse(idInput4, out int cId);
+            int.TryParse(collectionIdInput2, out int collectionId);
+
+            var userId = await _context.Favorites.FindAsync(cId);
+            var deleteId = await _context.Favorites.FindAsync(collectionId);
+            var favoritesId = await _context.Favorites.FirstOrDefaultAsync(x => x.CId == cId && x.CollectionId == collectionId);
+
+            _context.Favorites.Remove(favoritesId!);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Client");
         }
         #endregion
     }

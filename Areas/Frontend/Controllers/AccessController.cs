@@ -24,9 +24,6 @@ namespace test2.Areas.Frontend.Controllers
         [HttpGet]
         public IActionResult LoginC() { return View(new Guest()); }
 
-        [HttpGet]
-        public IActionResult LoginM() { return View(new Guest()); }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AccessCardC(Guest model)
@@ -59,6 +56,9 @@ namespace test2.Areas.Frontend.Controllers
 
             return RedirectToAction("Index", "Home", new { area = "Frontend" });
         }
+
+        [HttpGet]
+        public IActionResult LoginM() { return View(new Guest()); }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -100,6 +100,7 @@ namespace test2.Areas.Frontend.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
