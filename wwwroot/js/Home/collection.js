@@ -79,7 +79,8 @@ $(() => {
 
     //_book
     $(".btn_book1").on("click", function () {
-        let borrowCount = parseInt($("#box_borrow").val(), 10);
+        let borrowStatus = $("#box_borrowStatus").val();
+        let borrowCount = parseInt($("#box_borrowCount").val(), 10);
 
         $("#box_statusR").val("C")
 
@@ -89,6 +90,9 @@ $(() => {
             alert("請先登入")
 
             window.location.href = loginC
+        }
+        else if (borrowStatus == "True") {
+            alert("請先還書，尚有逾期書籍未歸還")
         }
         else if (borrowCount == 5) {
             alert("請先還書，借閱書籍不可超過5本")

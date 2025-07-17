@@ -44,12 +44,14 @@ namespace test2.Areas.Frontend.Controllers
             }
             else
             {
+                var borrowStatus = await _context.Borrows.AsNoTracking().AnyAsync(x => x.CId == guest.CId && x.BorrowStatusId == 3);
                 var borrowCount = await _context.Borrows.CountAsync(x => x.CId == guest.CId);
 
                 var guestClaim = new List<Claim>{
                 new Claim(ClaimTypes.Name, guest.CAccount),
                 new Claim(ClaimTypes.NameIdentifier, guest.CId.ToString()),
                 new Claim("Name", guest.CName),
+                new Claim("BorrowStatus", borrowStatus.ToString()),
                 new Claim("BorrowCount", borrowCount.ToString())
                 };
 
