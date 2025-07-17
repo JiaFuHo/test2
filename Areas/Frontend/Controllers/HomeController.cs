@@ -108,10 +108,23 @@ namespace test2.Areas.Frontend.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reserve(string user, string collection, string status)
+        public async Task<IActionResult> CreateReserve(string user, string collection, string status)
         {
             int.TryParse(user, out int cId);
             int.TryParse(collection, out int collectionId);
+
+            bool reservationStatus = await _context.Reservations.AnyAsync(x => x.CId == cId && x.CollectionId == collectionId && x.ReservationStatusId == 2);
+
+            if (reservationStatus) { return RedirectToAction(status == "C" ? "Collection" : "Query"); }
+
+            var reservationDate = await _context.Reservations.Where(x => x.CId == cId && x.CollectionId == collectionId).OrderByDescending(x => x.ReservationDate).FirstOrDefaultAsync();
+
+            if (reservationDate != null)
+            {
+                TimeSpan reservationDateDiff = DateTime.Now - reservationDate.ReservationDate;
+
+                if (reservationDateDiff.TotalDays < 1) { return RedirectToAction(status == "C" ? "Collection" : "Query"); }
+            }
 
             var reservation = new Reservation
             {
@@ -121,11 +134,27 @@ namespace test2.Areas.Frontend.Controllers
                 ReservationStatusId = 2
             };
 
-            _context.Reservations.Add(reservation!);
+            _context.Reservations.Add(reservation);
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction(status == "C" ? "Collection" : "Query");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateReserve(string user, string collection)
+        {
+            int.TryParse(user, out int cId);
+            int.TryParse(collection, out int collectionId);
+
+            var reservationId = await _context.Reservations.FirstOrDefaultAsync(x => x.CId == cId && x.CollectionId == collectionId && x.ReservationStatusId == 2);
+
+            reservationId!.ReservationStatusId = 4;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Client");
         }
 
         [HttpGet]
@@ -133,7 +162,9 @@ namespace test2.Areas.Frontend.Controllers
         {
             var userNameX = Convert.ToString(ViewData["UserName"]);
 
-            IQueryable<Client> client = _context.Clients.Include(x => x.Borrows).ThenInclude(y => y.BorrowStatus)
+            IQueryable<Client> client = _context.Clients.Include(x => x.Reservations).ThenInclude(y => y.ReservationStatus)
+                                                                                     .Include(x => x.Reservations).ThenInclude(y => y.Collection).ThenInclude(z => z.Author)
+                                                                                     .Include(x => x.Borrows).ThenInclude(y => y.BorrowStatus)
                                                                                      .Include(w => w.Borrows).ThenInclude(x => x.Book).ThenInclude(y => y.Collection).ThenInclude(z => z.Author)
                                                                                      .Include(x => x.Borrows).ThenInclude(y => y.Histories)
                                                                                      .Include(x => x.Favorites).ThenInclude(y => y.Collection).ThenInclude(z => z.Author)
@@ -211,8 +242,6 @@ namespace test2.Areas.Frontend.Controllers
             int.TryParse(idInput4, out int cId);
             int.TryParse(collectionIdInput2, out int collectionId);
 
-            var userId = await _context.Favorites.FindAsync(cId);
-            var deleteId = await _context.Favorites.FindAsync(collectionId);
             var favoritesId = await _context.Favorites.FirstOrDefaultAsync(x => x.CId == cId && x.CollectionId == collectionId);
 
             _context.Favorites.Remove(favoritesId!);

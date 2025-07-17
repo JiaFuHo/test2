@@ -14,17 +14,16 @@
                     <th></th>
                     <th>書名</th>
                     <th>作者</th>
-                    <th>借閱日期</th>
-                    <th>歸還期限</th>
-                    <th>借閱狀態</th>
+                    <th>預約日期</th>
+                    <th>取書期限</th>
+                    <th>預約狀態</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody class="text-center">
-                @foreach (var borrow in client!.Borrows.Reverse())
+                @foreach (var reservation in client!.Reservations.Reverse())
                 {
-                    var collection = borrow!.Book!.Collection;
-                    var favoriteStatus = client.Favorites.Any(x => x.CollectionId == collection.CollectionId);
+                    var collection = reservation!.Collection;
 
                     <tr>
                         <td>
@@ -35,20 +34,16 @@
                         </td>
                         <td>@Html.DisplayFor(modelItem => collection!.Title)</td>
                         <td>@Html.DisplayFor(modelItem => collection!.Author.Author1)</td>
-                        <td>@Html.DisplayFor(modelItem => borrow!.BorrowDate)</td>
-                        <td>@Html.DisplayFor(modelItem => borrow!.DueDateB)</td>
-                        <td><span class="badge bg-secondary" style="font-size: 1rem">@Html.DisplayFor(modelItem => borrow!.BorrowStatus.BorrowStatus1)</span></td>
+                        <td>@Html.DisplayFor(modelItem => reservation!.ReservationDate)</td>
+                        <td>@Html.DisplayFor(modelItem => reservation!.DueDateR)</td>
+                        <td><span class="badge bg-secondary" style="font-size: 1rem">@Html.DisplayFor(modelItem => reservation!.ReservationStatus.ReservationStatus1)</span></td>
                         <td>
-                            @if (favoriteStatus == true)
+                            @if (reservation!.ReservationStatus.ReservationStatusId == 2)
                             {
-                                <button class="badge btn btn-danger  bi-heart-fill btn_dFav" style="font-size: 1rem">移除最愛</button>
-                            }
-                            else
-                            {
-                                <button class="badge btn btn-danger  bi-heart-fill btn_cFav" style="font-size: 1rem">新增最愛</button>
+                                <button class="badge btn btn-danger bi-calendar2-x btn_uReservation" style="font-size: 1rem"> 取消預約</button>
                             }
                         </td>
-                        <td class="d-none td_F">@Html.DisplayFor(modelItem => collection!.CollectionId)</td>
+                        <td class="d-none td_R">@Html.DisplayFor(modelItem => collection!.CollectionId)</td>
                     </tr>
                 }
             </tbody>

@@ -67,7 +67,7 @@
             <!-- 個人狀態簡報 -->
             <div class="row mt-3">
                 <div class="col-3">
-                    <div class="card card-hover shadow-lg rounded-4 p-1" onclick="switchToTab('tab3')" style="cursor: pointer;">
+                    <div class="card card-hover shadow-lg rounded-4 p-1" onclick="switchToTab('tab1')" style="cursor: pointer;">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">我的最愛</h5>
                             <p class="card-text">
@@ -85,6 +85,22 @@
                 <div class="col-3">
                     <div class="card card-hover shadow-lg rounded-4 p-1" onclick="switchToTab('tab2')" style="cursor: pointer;">
                         <div class="card-body">
+                            <h5 class="card-title fw-bold">預約紀錄</h5>
+                            <p class="card-text">
+                                @{
+                                    var reservationCount = 0;
+
+                                    foreach (var reservation in client!.Reservations) { reservationCount++; }
+                                }
+
+                                已預約書籍：@reservationCount
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="card card-hover shadow-lg rounded-4 p-1" onclick="switchToTab('tab3')" style="cursor: pointer;">
+                        <div class="card-body">
                             <h5 class="card-title fw-bold">歷史紀錄</h5>
                             <p class="card-text">
                                 @{
@@ -92,8 +108,7 @@
 
                                     foreach (var borrow in client!.Borrows)
                                     {
-                                        foreach (var history in borrow!.Histories)
-                                            historyCount++;
+                                        foreach (var history in borrow!.Histories) { historyCount++; }
                                     }
                                 }
 
@@ -115,14 +130,6 @@
 
                                 已收到通知：@messageCount
                             </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="card card-hover shadow-lg rounded-4 p-1" onclick="switchToTab('')" style="cursor: pointer;">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">最新消息</h5>
-                            <p class="card-text">點擊查看更多</p>
                         </div>
                     </div>
                 </div>

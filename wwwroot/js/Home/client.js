@@ -120,5 +120,14 @@ $(() => {
         $("#btn_dFavS").trigger("click")
     })
 
+    $(".btn_uReservation").on("click", function () {
+        let collectionId = $(this).closest("tr").find(".td_R").text().trim();
+
+        alert("預約已取消")
+
+        $("#id_collection2").val(collectionId)
+        $("#btn_uReserveS").trigger("click")
+    })
+
     $("#btn-tab5").on("click", () => { $("#btn_logout").trigger("click") })
 })

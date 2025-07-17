@@ -111,7 +111,7 @@ $(() => {
 
         $("#box_statusR").val("Q")
 
-        if ($("#id_user").val() === "") {
+        if ($("#id_user1").val() === "") {
             let loginC = $(".btn_guideLC").attr("href");
 
             alert("請先登入")
@@ -125,11 +125,11 @@ $(() => {
             let collectionId = $("#td_Q").text();
             let status = $("#btn_reserve").text();
 
-            if (status === "借閱") { alert("借閱成功，需在3天內前往取書") }
-            else { alert("預約成功，可取書時將發送通知") }
+            if (status === "借閱") { alert(" 借閱成功，需在3天內前往取書\n(依通知為準，借閱相關規定請至訊息中心查看)") }
+            else { alert(" 預約成功，可取書時將發送通知\n(依通知為準，借閱相關規定請至訊息中心查看)") }
 
-            $("#id_collection").val(collectionId)
-            $("#btn_reserveS").trigger("click")
+            $("#id_collection1").val(collectionId)
+            $("#btn_cReserveS").trigger("click")
         }
     })
 

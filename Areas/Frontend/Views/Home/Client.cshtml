@@ -15,10 +15,13 @@
                 <button class="nav-link flex-grow-1 active" id="btn-tab0" data-bs-toggle="pill" data-bs-target="#tab0" type="button" role="tab">
                     會員資訊
                 </button>
-                <button class="nav-link flex-grow-1" id="btn-tab3" data-bs-toggle="pill" data-bs-target="#tab3" type="button" role="tab">
+                <button class="nav-link flex-grow-1" id="btn-tab1" data-bs-toggle="pill" data-bs-target="#tab1" type="button" role="tab">
                     我的最愛
                 </button>
                 <button class="nav-link flex-grow-1" id="btn-tab2" data-bs-toggle="pill" data-bs-target="#tab2" type="button" role="tab">
+                    預約紀錄
+                </button>
+                <button class="nav-link flex-grow-1" id="btn-tab3" data-bs-toggle="pill" data-bs-target="#tab3" type="button" role="tab">
                     歷史紀錄
                 </button>
                 <button class="nav-link flex-grow-1" id="btn-tab4" data-bs-toggle="pill" data-bs-target="#tab4" type="button" role="tab">
@@ -37,19 +40,18 @@
     <!-- 右側 內容 -->
     <div class="content container-fluid" style="margin-right: 5vw">
         <div class="tab-content" id="sidebarTabsContent">
-            <!-- 首頁 -->
             <div class="tab-pane active" id="tab0" role="tabpanel">
                 @await Html.PartialAsync("~/Areas/Frontend/Views/Shared/_Partial/_clientHome.cshtml")
             </div>
-            <!-- 第二頁|借閱內容 -->
-            <div class="tab-pane " id="tab2" role="tabpanel">
-                @await Html.PartialAsync("~/Areas/Frontend/Views/Shared/_Partial/_clientBorrow.cshtml")
-            </div>
-            <!-- 第三頁|最愛內容 -->
-            <div class="tab-pane" id="tab3" role="tabpanel">
+            <div class="tab-pane" id="tab1" role="tabpanel">
                 @await Html.PartialAsync("~/Areas/Frontend/Views/Shared/_Partial/_clientFav.cshtml")
             </div>
-            <!-- 第四頁|訊息通知 -->
+            <div class="tab-pane" id="tab2" role="tabpanel">
+                @await Html.PartialAsync("~/Areas/Frontend/Views/Shared/_Partial/_clientReserve.cshtml")
+            </div>
+            <div class="tab-pane " id="tab3" role="tabpanel">
+                @await Html.PartialAsync("~/Areas/Frontend/Views/Shared/_Partial/_clientBorrow.cshtml")
+            </div>
             <div class="tab-pane" id="tab4" role="tabpanel">
                 @await Html.PartialAsync("~/Areas/Frontend/Views/Shared/_Partial/_clientMesg.cshtml")
             </div>
