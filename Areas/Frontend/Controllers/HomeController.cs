@@ -3,9 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using test2.Areas.Frontend.Models.Dtos;
+using test2.Areas.Frontend.Models.ViewModels;
 using test2.Controllers;
 using test2.Models;
+using test2.Services;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -25,16 +29,25 @@ namespace test2.Areas.Frontend.Controllers
         public const string sk8 = "status";
 
         private readonly Test2Context _context;
+
+        private readonly ILogger<HomeController> _logger;
+        private readonly ActivityService _activityService;
+        private readonly AnnouncementService _announcementService;
+        private readonly UserService _userService;
         #endregion
 
         #region constructor
-        public HomeController(Test2Context context) { _context = context; }
+        public HomeController(ILogger<HomeController> logger, Test2Context context, ActivityService activityService, AnnouncementService announcementService, UserService userService)
+        {
+            _logger = logger;
+            _activityService = activityService;
+            _announcementService = announcementService;
+            _userService = userService;
+            _context = context;
+        }
         #endregion
 
         #region action
-        [HttpGet]
-        public IActionResult Index() { return View(); }
-
         //[HttpPost]
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Query(string query1, string type1, string query2, string year1, string year2, string lang, string type2, string status)
@@ -249,6 +262,348 @@ namespace test2.Areas.Frontend.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Client");
+        }
+
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string displayType = "", string searchQuery = "")
+        {
+            var viewModel = new HomeIndexViewModel();
+
+            try
+            {
+                // 從 AnnouncementService 獲取公告資料
+                viewModel = await _announcementService.GetPagedAnnouncementsAsync(pageNumber, pageSize, displayType, searchQuery);
+
+                // 查詢最新書籍 (分兩階段處理以避免翻譯錯誤)
+                // 第一階段：先從資料庫取出所有書籍及其 Collection 資訊
+                var allBooksWithCollection = await _context.Books
+                                                         .Include(b => b.Collection)
+                                                            .ThenInclude(c => c.Author) // 在 Collection 載入後，再載入 Author 資訊
+                                                         .ToListAsync(); // 這裡會將所有相關書籍載入記憶體
+
+
+                // 第二階段：在記憶體中進行分組、排序和篩選
+                viewModel.NewBooks = allBooksWithCollection
+                                         .GroupBy(b => b.Collection?.CollectionId) // 根據 CollectionId 分組
+                                         .Where(g => g.Key.HasValue) // 過濾掉 CollectionId 為 null 的分組
+                                         .Select(g => g.OrderByDescending(b => b.AccessionDate).First()) // 在每個 CollectionId 組中，取出 AccessionDate 最新的那本
+                                         .OrderByDescending(b => b.Collection?.PublishDate) // 再依出版日期降冪排序
+                                         .Take(6)
+                                         .ToList(); // 轉成 List
+
+                // 查詢熱門書籍 (依照借閱次數 BorrowCount 降冪排序，取前 4 本)    
+
+                viewModel.PopularBooks = await _context.Books
+                                                        .Include(b => b.Collection) // 導覽屬性載入 Collection
+                                                            .ThenInclude(c => c.Author) // 在 Collection 載入後，再載入 Author 資訊
+                                                        .GroupJoin(
+                                                            _context.Borrows,
+                                                            book => book.BookId, // Book 的主鍵是 BookId
+                                                            borrow => borrow.BookId, // Borrow 的外鍵是 BookId
+                                                            (book, borrows) => new
+                                                            {
+                                                                Book = book,
+                                                                BorrowCount = borrows.Count()
+                                                            })
+                                                        .OrderByDescending(x => x.BorrowCount)
+                                                        .Select(x => x.Book)
+                                                        .Take(4)
+                                                        .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "載入 Home Index 資料時發生錯誤。");
+                ViewData["Error"] = $"無法載入首頁資料: {ex.Message}";
+                // 即使出錯，ViewModel 還是會有空列表，避免 View 報錯
+            }
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        /// <summary>
+        /// 透過 AJAX POST 請求取得公告列表的資料，並可根據頁碼、公告類型進行篩選。
+        /// </summary>
+        /// <param name="pageNumber">當前頁碼。</param>
+        /// <param name="pageSize">每頁顯示公告數量</param>
+        /// <param name="displayType">要篩選的公告類型Id。</param>
+        /// <param name="searchQuery">要搜尋的活動標題</param>
+        public async Task<IActionResult> UpdateAnnouncementList(
+            [FromForm] int pageNumber,
+            [FromForm] int pageSize,
+            [FromForm] string displayType,
+            [FromForm] string searchQuery)
+        {
+            try
+            {
+
+                // 確保 displayType 有預設值，避免 null 參考錯誤
+                displayType ??= "";  // 預設全部類型
+
+                HomeIndexViewModel viewModel;
+
+                // 呼叫 GetPagedActivitiesAsync
+                // 如果 searchQuery 是 null，searchQuery 就傳 null
+                viewModel = await _announcementService.GetPagedAnnouncementsAsync(
+                    pageNumber,
+                    pageSize,
+                    displayType,
+                    searchQuery == "null" ? null : searchQuery);
+
+                return PartialView("~/Areas/Frontend/Views/Shared/_Partial/_announcementList.cshtml", viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"更新活動列表時發生錯誤。 傳入參數: Page = {pageNumber}, pageSize = {pageSize}, displayType = {displayType}, searchQuery = {searchQuery ?? "null"}");
+                return StatusCode(500, $"更新活動列表失敗，請稍後再試: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 顯示活動列表頁，支援分頁和顯示模式切換。
+        /// </summary>
+        /// <param name="page">當前頁碼，預設為 1。</param>
+        /// <param name="pageSize">每頁顯示筆數，預設為 4。</param>
+        /// <param name="displayMode">顯示模式 ("image" 或 "table")，預設為 "image"。</param>
+        public async Task<IActionResult> Activity(int page = 1, int pageSize = 4, string displayMode = "image") // 預設第一頁，每頁4筆，圖片式顯示
+        {
+            var viewModel = new ActivityPagedViewModel();
+
+            try
+            {
+                viewModel = await _activityService.GetPagedActivitiesAsync(page, pageSize, displayMode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "載入 Home Activity 資料時發生錯誤。");
+                ViewData["Error"] = $"無法載入活動列表頁資料: {ex.Message}";
+                // 即使出錯，ViewModel 還是會有空列表，避免 View 報錯
+            }
+
+            return View(viewModel); // 將包含完整分頁資訊的 ViewModel 傳遞給 View
+        }
+
+        [HttpPost]
+        /// <summary>
+        /// 透過 AJAX POST 請求取得活動列表的資料，並可根據頁碼、顯示模式和活動類型進行篩選。
+        /// </summary>
+        /// <param name="page">當前頁碼。</param>
+        /// <param name="displayMode">要切換到的顯示模式 ("image" 或 "table")。</param>
+        /// <param name="displayType">要篩選的活動類型 ("全部"、"講座" 等)。</param>
+        /// <param name="searchQuery">要搜尋的活動標題</param>
+        public async Task<IActionResult> UpdateActivityList(
+            [FromForm] int page,
+            [FromForm] string displayMode,
+            [FromForm] string displayType,
+            [FromForm] string searchQuery)
+        {
+            try
+            {
+
+                // 確保 displayMode 和 displayType 有預設值，避免 null 參考錯誤
+                displayMode ??= "image"; // 預設圖片模式
+                displayType ??= "全部";  // 預設全部類型
+
+                // 根據 displayMode 決定 pageSize
+                int pageSize = displayMode switch
+                {
+                    "image" => 4,
+                    "table" => 6,
+                    _ => -1 // 如果 displayMode 不是預期的模式就把 pageSize 設為 -1
+                };
+
+                if (pageSize == -1) // 如果 pageSize 為無效值 直接返回錯誤
+                {
+                    return BadRequest("無效的顯示模式");
+                }
+
+                ActivityPagedViewModel viewModel;
+
+                // 呼叫 GetPagedActivitiesAsync
+                // 如果 displayType 是 "全部"，activityTypeName 就傳 null
+                // 如果 searchQuery 是 null，searchQuery 就傳 null
+                viewModel = await _activityService.GetPagedActivitiesAsync(
+                    page,
+                    pageSize,
+                    displayMode,
+                    displayType == "全部" ? null : displayType,
+                    searchQuery == "null" ? null : searchQuery);
+
+                string? partialViewPath = displayMode switch
+                {
+                    "image" => "~/Areas/Frontend/Views/Shared/_Partial/_activityList_image.cshtml",
+                    "table" => "~/Areas/Frontend/Views/Shared/_Partial/_activityList_table.cshtml",
+                    _ => null
+                };
+
+                // 如果 partialViewPath 不再預期內 表示 displayMode 不在預期內
+                if (partialViewPath == null)
+                {
+                    return BadRequest("無效的顯示模式，無法載入對應的視圖");
+                }
+
+                return PartialView(partialViewPath, viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"更新活動列表時發生錯誤。 傳入參數: Page = {page}, displayType = {displayType}, displayMode = {displayMode}, searchQuery = {searchQuery ?? "null"}");
+                return StatusCode(500, $"更新活動列表失敗，請稍後再試: {ex.Message}");
+            }
+        }
+
+        public async Task<IActionResult> ActivityInfo(string activityTitle)
+        {
+            try
+            {
+                // 呼叫時，型別會自動推斷為 ActivityViewModel?
+                var viewModel = await _activityService.GetActivityByTitleAsync(activityTitle);
+
+                if (viewModel == null) // <-- 這裡就是編譯器強制你檢查 null 的地方
+                {
+                    _logger.LogWarning($"找不到標題為 '{activityTitle}' 的活動。");
+                    return NotFound($"找不到要查詢的活動: {activityTitle}");
+                }
+
+                return View(viewModel); // 如果 viewModel 不為 null，就可以安全地傳遞給 View
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"載入 Home ActivityInfo 資料時發生錯誤，活動標題: {activityTitle}。");
+                ViewData["Error"] = $"無法載入活動資訊頁面資料: {ex.Message}";
+                return View(new ActivityViewModel()); // 即使出錯，回傳一個空的 ViewModel
+            }
+        }
+
+        /// <summary>
+        /// 處理活動報名請求。
+        /// </summary>
+        /// <param name="activityId">要報名的活動 ID。</param>
+        /// <returns>JSON 格式的報名結果。</returns>
+        [HttpPost]
+        public async Task<IActionResult> RegisterActivity(int activityId)
+        {
+            // 判斷使用者是否未登入
+            if (!(User.Identity != null && User.Identity.IsAuthenticated))
+            {
+                // 未登入：直接告知前端需要登入，並提供登入頁面的 URL
+                return Json(new
+                {
+                    success = false,
+                    message = "請先登入才能報名活動喔！",
+                    redirectToLogin = Url.Action("LoginC", "Access", new { area = "Frontend" }) // 提供正確的登入頁面URL
+                });
+            }
+
+            // 已登入，繼續報名邏輯
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdClaim, out int clientId))
+            {
+                // 無法取得使用者 ID (理論上登入後不會發生，但做個防範)
+                return Json(new { success = false, message = "無法取得您的會員資訊，請重新登入。" });
+            }
+
+            var activity = await _context.Activities.FirstOrDefaultAsync(a => a.ActivityId == activityId);
+            if (activity == null)
+            {
+                return Json(new { success = false, message = "找不到該活動。" });
+            }
+
+            // 檢查是否在報名時間內
+            if (DateTime.Now < activity.StartDate || DateTime.Now > activity.EndDate)
+            {
+                return Json(new { success = false, message = "報名時間已過或尚未開始。" });
+            }
+
+            // 檢查名額
+            if (activity.Capacity <= 0 && activity.Capacity != -1) // -1 表示無需報名，不檢查名額
+            {
+                return Json(new { success = false, message = "名額已滿，無法報名！" });
+            }
+
+            // 檢查是否已重複報名
+            var existingRegistration = await _context.Participations
+                                                     .FirstOrDefaultAsync(ar => ar.CId == clientId && ar.ActivityId == activityId);
+            if (existingRegistration != null)
+            {
+                return Json(new { success = false, message = "您已經報名過此活動了！" });
+            }
+
+            // 執行報名
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var newRegistration = new Participation
+                    {
+                        CId = clientId,
+                        ActivityId = activityId,
+                        ParticipationDate = DateTime.Now,
+                        ParticipationStatusId = 1 
+                    };
+                    _context.Participations.Add(newRegistration);
+
+                    // 如果活動需要扣除名額 (Capacity 不是 -1)
+                    if (activity.Capacity > 0)
+                    {
+                        activity.Capacity--; // 名額減一
+                        _context.Activities.Update(activity);
+                    }
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return Json(new { success = true, message = "恭喜您，報名成功！" });
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    // 記錄錯誤 (例如使用 ILogger)
+                    Console.Error.WriteLine($"報名失敗: {ex.Message}");
+                    return Json(new { success = false, message = "報名失敗，請稍後再試。若問題持續請聯繫客服。" });
+                }
+            }
+        }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View(new UserRegistrationDto());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(UserRegistrationDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            if (model.Email == null || model.Password == null)
+            {
+                return View(model);
+            }
+
+            var registerResult = await _userService.UserRegister(model.PhoneNumber, model.Email, model.Password);
+
+            if (registerResult.IsSuccess)
+            {
+                TempData["Result"] = "success";
+                TempData["ShowModal"] = true;
+                TempData["ResultMessage"] = registerResult.SuccessMessage;
+                return RedirectToAction("Register");
+            }
+
+            else
+            {
+                TempData["Result"] = "fail";
+                TempData["ShowModal"] = true;
+                TempData["ResultMessage"] = registerResult.FailMessage;
+                return View(model);
+            }
         }
         #endregion
     }

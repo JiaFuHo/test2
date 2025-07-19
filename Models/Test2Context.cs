@@ -47,6 +47,10 @@ public partial class Test2Context : DbContext
 
     public virtual DbSet<Notification> Notifications { get; set; }
 
+    public virtual DbSet<Participation> Participations { get; set; }
+
+    public virtual DbSet<ParticipationStatus> ParticipationStatuses { get; set; }
+
     public virtual DbSet<Reservation> Reservations { get; set; }
 
     public virtual DbSet<ReservationStatus> ReservationStatuses { get; set; }
@@ -374,6 +378,42 @@ public partial class Test2Context : DbContext
                 .HasForeignKey(d => d.CId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ClientN");
+        });
+
+        modelBuilder.Entity<Participation>(entity =>
+        {
+            entity.ToTable("Participation");
+
+            entity.Property(e => e.ParticipationId).HasColumnName("participationId");
+            entity.Property(e => e.ActivityId).HasColumnName("activityId");
+            entity.Property(e => e.CId).HasColumnName("cId");
+            entity.Property(e => e.ParticipationDate).HasColumnName("participationDate");
+            entity.Property(e => e.ParticipationStatusId).HasColumnName("participationStatusId");
+
+            entity.HasOne(d => d.Activity).WithMany(p => p.Participations)
+                .HasForeignKey(d => d.ActivityId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Activity");
+
+            entity.HasOne(d => d.CIdNavigation).WithMany(p => p.Participations)
+                .HasForeignKey(d => d.CId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ClientP");
+
+            entity.HasOne(d => d.ParticipationStatus).WithMany(p => p.Participations)
+                .HasForeignKey(d => d.ParticipationStatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ParticipationStatus");
+        });
+
+        modelBuilder.Entity<ParticipationStatus>(entity =>
+        {
+            entity.ToTable("ParticipationStatus");
+
+            entity.Property(e => e.ParticipationStatusId).HasColumnName("participationStatusId");
+            entity.Property(e => e.ParticipationStatus1)
+                .HasMaxLength(50)
+                .HasColumnName("participationStatus");
         });
 
         modelBuilder.Entity<Reservation>(entity =>

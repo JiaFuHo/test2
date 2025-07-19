@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace test2.Models;
 
@@ -23,6 +22,8 @@ public partial class Client
     public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+    public virtual ICollection<Participation> Participations { get; set; } = new List<Participation>();
 
     public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
 }
