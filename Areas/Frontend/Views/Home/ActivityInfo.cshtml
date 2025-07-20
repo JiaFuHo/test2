@@ -1,14 +1,5 @@
 ﻿@model test2.Areas.Frontend.Models.ViewModels.ActivityViewModel;
 
-@if (User.Identity != null && User.Identity.IsAuthenticated)
-{
-    Layout = "~/Areas/Frontend/Views/Shared/_Layout/_LoginAfter.cshtml";
-}
-else
-{
-    Layout = "~/Areas/Frontend/Views/Shared/_Layout/_LoginBefore.cshtml";
-}
-
 @await Html.PartialAsync("~/Areas/Frontend/Views/Shared/_Partial/_modal.cshtml")
 
 <div class="mt-5 back-to-list">
@@ -16,12 +7,12 @@ else
 </div>
 
 <div class="activity-detail-container">
-    @if (Model.ActivityTitle != null )
+    @if (Model.ActivityTitle != null)
     {
         <h1 class="activity-title">@Model.ActivityTitle</h1>
     }
     <div class="activity-header-meta" style="font-size: 1em;">
-        @if ( Model.StartDate !=  default(DateTime) && Model.EndDate != default(DateTime))
+        @if (Model.StartDate != default(DateTime) && Model.EndDate != default(DateTime))
         {
             <span class="me-4"><i class="bi bi-calendar-event"></i> 活動日期：@Model.StartDate.ToString() ~ @Model.EndDate.ToString()</span>
         }
@@ -32,7 +23,7 @@ else
 
         @* <span class="me-4"><i class="bi bi-geo-alt-fill"></i> 活動地點：@Model.ActivityLocation </span> *@
 
-        @if ( Model.Audience != null)
+        @if (Model.Audience != null)
         {
             <span><i class="bi bi-person-fill"></i> 適用對象：@Model.Audience.Audience1</span>
         }
@@ -43,7 +34,7 @@ else
 
     </div>
 
-    @if ( Model.ActivityImgBase64 != null )
+    @if (Model.ActivityImgBase64 != null)
     {
         <img src="data:image/jpeg;base64,@Model.ActivityImgBase64" alt="活動圖片" class="activity-image">
     }
@@ -54,7 +45,7 @@ else
 
     <h3 class="section-heading">活動說明</h3>
     <div class="activity-content">
-        @if ( Model.ActivityDesc != null)
+        @if (Model.ActivityDesc != null)
         {
             <p style="white-space: pre-wrap;">@Model.ActivityDesc</p>
         }
@@ -157,7 +148,7 @@ else
         {
             <button type="button" class="btn btn-primary register-btn-detail"
                     data-activity-id="@Model.ActivityId" id="registerActivityDetailBtn">
-                    點我報名
+                點我報名
             </button>
             <small class="d-block text-center mt-2 text-muted">本活動正在開放報名，心動不如馬上行動！</small>
         }

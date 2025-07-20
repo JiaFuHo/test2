@@ -24,6 +24,12 @@
                                 @userName <i class="bi bi-person"></i>
                             </a>
                         }
+                        else if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <a class="nav-link text-dark link" asp-area="Frontend" asp-controller="Home" asp-action="Client">
+                                @User.Identity.Name <i class="bi bi-person"></i>
+                            </a>
+                        }
                         else
                         {
                             <a class="nav-link text-dark link" asp-area="Frontend" asp-controller="Access" asp-action="LoginC">

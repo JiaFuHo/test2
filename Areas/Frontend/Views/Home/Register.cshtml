@@ -1,14 +1,5 @@
 ﻿@model test2.Areas.Frontend.Models.Dtos.UserRegistrationDto
 
-@if (User.Identity != null && User.Identity.IsAuthenticated)
-{
-    Layout = "~/Areas/Frontend/Views/Shared/_Layout/_LoginAfter.cshtml";
-}
-else
-{
-    Layout = "~/Areas/Frontend/Views/Shared/_Layout/_LoginBefore.cshtml";
-}
-
 @await Html.PartialAsync("~/Areas/Frontend/Views/Shared/_Partial/_modal.cshtml")
 
 <main>
@@ -36,7 +27,7 @@ else
                 <input asp-for="Password" class="form-control" placeholder="請輸入您的密碼">
                 <div class="error-message">
                     <i class="icon-lg bi bi-exclamation-circle-fill"></i>
-					<span asp-validation-for="Password" class="text-danger"></span>
+                    <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
             </div>
             <div class="mb-2">
@@ -44,7 +35,7 @@ else
                 <input asp-for="ConfirmPassword" class="form-control" placeholder="請再次輸入您的密碼">
                 <div class="error-message">
                     <i class="icon-lg bi bi-exclamation-circle-fill"></i>
-					<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
             </div>
             <div class="d-grid mb-3">
