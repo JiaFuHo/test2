@@ -10,6 +10,88 @@
     }
 }
 
+//------------------------------- 評論與星數-------------------------------
+//評論星星
+document.querySelectorAll('.star-rating i').forEach(star => {
+    // 懸停效果
+    star.addEventListener('mouseover', function () {
+        const rating = parseInt(this.getAttribute('data-rating'));
+        highlightStars(rating);
+    });
+
+    // 點擊選擇
+    star.addEventListener('click', function () {
+        const rating = parseInt(this.getAttribute('data-rating'));
+        document.getElementById('selectedRating').value = rating;
+        setSelectedStars(rating);
+    });
+})
+
+// 重置懸停效果
+document.querySelector('.star-rating').addEventListener('mouseleave', function () {
+    const selectedRating = parseInt(document.getElementById('selectedRating').value);
+    if (selectedRating > 0) {
+        setSelectedStars(selectedRating);
+    } else {
+        resetStars();
+    }
+})
+
+// 高亮星星（懸停時）
+function highlightStars(rating) {
+    const stars = document.querySelectorAll('.star-rating i');
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.classList.remove('bi-star');
+            star.classList.add('bi-star-fill');
+        } else {
+            star.classList.remove('bi-star-fill');
+            star.classList.add('bi-star');
+        }
+    });
+}
+
+// 設定選中的星星（點擊後）
+function setSelectedStars(rating) {
+    const stars = document.querySelectorAll('.star-rating i');
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.classList.remove('bi-star');
+            star.classList.add('bi-star-fill');
+        } else {
+            star.classList.remove('bi-star-fill');
+            star.classList.add('bi-star');
+        }
+    });
+}
+
+// 重置星星狀態
+function resetStars() {
+    const stars = document.querySelectorAll('.star-rating i');
+    stars.forEach(star => {
+        star.classList.remove('bi-star-fill');
+        star.classList.add('bi-star');
+    });
+}
+
+//評論框字數實時變動
+const commentText = document.getElementById('commentText');
+const charCount = document.getElementById('charCount');
+
+commentText.addEventListener('input', function () {
+    const currentLength = this.value.length;
+    charCount.textContent = currentLength;
+
+    // 超過限制時截斷文字（雙重保障）
+    if (currentLength > 200) {
+        this.value = this.value.substring(0, 200);
+        charCount.textContent = 200;
+    }
+
+    // 超過時變紅色提示
+    charCount.style.color = currentLength >= 200 ? 'red' : '';
+})
+
 $(() => {
     $("#editPasswordBtn").on("click", () => {
         $("#editPasswordBtn").addClass("d-none")
@@ -127,6 +209,22 @@ $(() => {
 
         $("#id_collection2").val(collectionId)
         $("#btn_uReserveS").trigger("click")
+    })
+
+    $(".btn-open-comment").on("click", function () {
+        let borrowId = $(this).closest("tr").find(".td_C").text().trim();
+
+        $("#borrowIdInput").val(borrowId)
+    })
+
+    $(".btn_cCom").on("click", function () {
+        let starCount = $(".bi-star-fill").length;
+
+        alert("變更已儲存")
+
+        $("#rate").val(starCount)
+        $("#comment").val($("#commentText").val())
+        $("#btn_comment").trigger("click")
     })
 
     $("#btn-tab5").on("click", () => { $("#btn_logout").trigger("click") })

@@ -25,6 +25,7 @@
                 {
                     var collection = borrow!.Book!.Collection;
                     var favoriteStatus = client.Favorites.Any(x => x.CollectionId == collection.CollectionId);
+                    var commentStatus = borrow.Histories.Any(x => x.Score > 0 || !String.IsNullOrWhiteSpace(x.Feedback));
 
                     <tr>
                         <td>
@@ -41,17 +42,65 @@
                         <td>
                             @if (favoriteStatus == true)
                             {
-                                <button class="badge btn btn-danger  bi-heart-fill btn_dFav" style="font-size: 1rem">移除最愛</button>
+                                <button class="badge btn btn-danger  bi-heart-fill btn_dFav" style="font-size: 1rem"> 移除最愛</button>
                             }
                             else
                             {
-                                <button class="badge btn btn-danger  bi-heart-fill btn_cFav" style="font-size: 1rem">新增最愛</button>
+                                <button class="badge btn bi-heart-fill btn_cFav" style="font-size: 1rem; background-color: var(--c-green2-100)"> 新增最愛</button>
+                            }
+
+                            @if (commentStatus == true)
+                            {
+                                <button class="badge btn bi-chat-left-text-fill btn-open-comment mt-1" style="font-size: 1rem; background-color: var(--c-blue1---075)" data-bs-toggle="modal" data-bs-target="#commentModal"> 修改評論</button>
+                            }
+                            else
+                            {
+                                <button class="badge btn bi-chat-left-text-fill btn-open-comment mt-1" style="font-size: 1rem; background-color: var(--c-blue1---075)" data-bs-toggle="modal" data-bs-target="#commentModal"> 新增評論</button>
                             }
                         </td>
+                        <td class="d-none td_C">@Html.DisplayFor(modelItem => borrow!.BorrowId)</td>
                         <td class="d-none td_F">@Html.DisplayFor(modelItem => collection!.CollectionId)</td>
                     </tr>
                 }
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 星級評分 -->
+                <div class="mb-3">
+                    <div class="mb-3">
+                        <label class="form-label">評分</label>
+                        <div class="star-rating">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="bi bi-star" data-rating="@i"></i>
+                            }
+                        </div>
+                    </div>
+                    <input type="hidden" id="selectedRating" name="rating" value="0">
+                </div>
+
+                <!-- 評論輸入框 -->
+                <div class="mb-3">
+                    <label for="commentText" class="form-label">評論</label>
+                    <textarea class="form-control" id="commentText" rows="3" maxlength="200" style="resize: none;"></textarea>
+                    <div class="text-end text-muted mt-1">
+                        <span id="charCount">0</span>/200 字元
+                    </div>
+                </div>
+            </div>
+            <div class="text-end m-1">
+                <button type="button" class="btn btn_cCom" style="color: white; background-color: var(--c-green2-100)">確認</button>
+                <button type="button" class="btn" style="color: white; background-color: var(--c-blue---050)" data-bs-dismiss="modal">取消</button>
+            </div>
+        </div>
     </div>
 </div>

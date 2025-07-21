@@ -264,6 +264,23 @@ namespace test2.Areas.Frontend.Controllers
             return RedirectToAction("Client");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateComment(string borrowIdInput, string rate, string comment)
+        {
+            int.TryParse(borrowIdInput, out int borrowId);
+            int.TryParse(rate, out int score);
+
+            var borrowIdX = await _context.Histories.FindAsync(borrowId);
+
+            borrowIdX!.Score = score;
+            borrowIdX!.Feedback = comment;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Client");
+        }
+
         public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string displayType = "", string searchQuery = "")
         {
             var viewModel = new HomeIndexViewModel();
@@ -537,7 +554,7 @@ namespace test2.Areas.Frontend.Controllers
                         CId = clientId,
                         ActivityId = activityId,
                         ParticipationDate = DateTime.Now,
-                        ParticipationStatusId = 1 
+                        ParticipationStatusId = 1
                     };
                     _context.Participations.Add(newRegistration);
 
