@@ -1,6 +1,6 @@
 :root {
     --c-black-075: rgba(0, 0, 0, .75);
-    --c-blue1---075: rgb(30, 90, 150, .75);
+    --c-blue1--075: rgb(30, 90, 150, .75);
     --c-blue---050: rgba(10, 30, 60, .5);
     --c-brown1-000: rgba(225, 180, 105, 0);
     --c-brown1-010: rgba(225, 180, 105, .1);
@@ -25,6 +25,7 @@
     --c-green2-100: rgba(165, 190, 125);
     --c-orange-025: rgba(255, 225, 185, .25);
     --c-orange-100: rgba(255, 225, 185);
+    --c-red----100: rgba(225, 105, 105);
     --f-family-001: 'Righteous', 'Noto Sans TC', sans-serif;
     --h-header: 10vh;
 }

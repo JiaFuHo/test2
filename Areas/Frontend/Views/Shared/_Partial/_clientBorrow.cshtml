@@ -26,6 +26,7 @@
                     var collection = borrow!.Book!.Collection;
                     var favoriteStatus = client.Favorites.Any(x => x.CollectionId == collection.CollectionId);
                     var commentStatus = borrow.Histories.Any(x => x.Score > 0 || !String.IsNullOrWhiteSpace(x.Feedback));
+                    var historyCount = 0;
 
                     <tr>
                         <td>
@@ -42,24 +43,32 @@
                         <td>
                             @if (favoriteStatus == true)
                             {
-                                <button class="badge btn btn-danger  bi-heart-fill btn_dFav" style="font-size: 1rem"> 移除最愛</button>
+                                <button class="badge btn bi-heart-fill btn_dFav" style="font-size: 1rem"> 移除最愛</button>
                             }
                             else
                             {
-                                <button class="badge btn bi-heart-fill btn_cFav" style="font-size: 1rem; background-color: var(--c-green2-100)"> 新增最愛</button>
+                                <button class="badge btn bi-heart-fill btn_cFav" style="font-size: 1rem"> 新增最愛</button>
                             }
 
                             @if (commentStatus == true)
                             {
-                                <button class="badge btn bi-chat-left-text-fill btn-open-comment mt-1" style="font-size: 1rem; background-color: var(--c-blue1---075)" data-bs-toggle="modal" data-bs-target="#commentModal"> 修改評論</button>
+                                <button class="badge btn bi-chat-left-text-fill btn-open-comment mt-1" style="font-size: 1rem" data-bs-toggle="modal" data-bs-target="#commentModal"> 修改評論</button>
                             }
                             else
                             {
-                                <button class="badge btn bi-chat-left-text-fill btn-open-comment mt-1" style="font-size: 1rem; background-color: var(--c-blue1---075)" data-bs-toggle="modal" data-bs-target="#commentModal"> 新增評論</button>
+                                <button class="badge btn bi-chat-left-text-fill btn-open-comment mt-1" style="font-size: 1rem" data-bs-toggle="modal" data-bs-target="#commentModal"> 新增評論</button>
                             }
                         </td>
                         <td class="d-none td_C">@Html.DisplayFor(modelItem => borrow!.BorrowId)</td>
                         <td class="d-none td_F">@Html.DisplayFor(modelItem => collection!.CollectionId)</td>
+
+                        @foreach (var history in borrow.Histories)
+                        {
+                            historyCount++;
+
+                            <td class="d-none td_score" id="score_@historyCount">@Html.DisplayFor(modelItem => history.Score)</td>
+                            <td class="d-none td_feedback" id="feedback_@historyCount">@Html.DisplayFor(modelItem => history.Feedback)</td>
+                        }
                     </tr>
                 }
             </tbody>

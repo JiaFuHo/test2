@@ -213,8 +213,14 @@ $(() => {
 
     $(".btn-open-comment").on("click", function () {
         let borrowId = $(this).closest("tr").find(".td_C").text().trim();
+        let score = $(this).closest("tr").find(".td_score").text().trim();
+        let comment = $(this).closest("tr").find(".td_feedback").text().trim();
 
         $("#borrowIdInput").val(borrowId)
+
+        setSelectedStars(score)
+
+        if (comment != "") { $("#commentText").val(comment); }
     })
 
     $(".btn_cCom").on("click", function () {
