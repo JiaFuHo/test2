@@ -91,10 +91,10 @@ namespace test2.Areas.Frontend.Controllers
             else
             {
                 var guestClaim = new List<Claim>{
-                new Claim(ClaimTypes.Name, guest.CAccount),
-                new Claim(ClaimTypes.NameIdentifier, guest.CId.ToString()),
-                new Claim("Name", guest.CName),
-                new Claim("Permission", guest.Permission.ToString())
+                    new Claim(ClaimTypes.Name, guest.CAccount),
+                    new Claim(ClaimTypes.NameIdentifier, guest.CId.ToString()),
+                    new Claim("Name", guest.CName),
+                    new Claim("Permission", guest.Permission.ToString())
                 };
 
                 if (guest.Permission == 2) { guestClaim.Add(new Claim(ClaimTypes.Role, "Admin")); }
