@@ -22,7 +22,7 @@
                         @* @activity.StartDate.ToString("MM/dd") ~ @activity.EndDate.ToString("MM/dd") *@
                     </td>
                     <td>@(activity.Audience?.Audience1 ?? "尚無適用對象")</td>
-                    <td><span class="badge">@(activity.ActivityType?.ActivityType1 ?? "尚無活動類型")</span></td>
+                    <td><span class="badge">@(activity.ActivityType?.ActivityType1 ?? "尚無活動類別")</span></td>
                     <td>
                         @* ====== 報名按鈕邏輯優化 ====== *@
                         @{

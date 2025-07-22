@@ -34,7 +34,7 @@ namespace test2.Areas.Frontend.Models.ViewModels
         [Display(Name = "活動地點")]
         public string ActivityLocation { get; set; } = string.Empty;
 
-        [Display(Name = "活動類型 ID")]
+        [Display(Name = "活動類別 ID")]
         public int ActivityTypeId { get; set; }
 
         [Display(Name = "受眾種類 ID")]

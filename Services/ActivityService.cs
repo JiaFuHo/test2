@@ -142,12 +142,12 @@ namespace test2.Services
         }
 
         /// <summary>
-        /// 使用 EF Core 獲取分頁過後的活動列表，可選活動類型和標題篩選。
+        /// 使用 EF Core 獲取分頁過後的活動列表，可選活動類別和標題篩選。
         /// </summary>
         /// <param name="pageNumber">當前頁碼。</param>
         /// <param name="pageSize">每頁顯示筆數。</param>
         /// <param name="displayMode">顯示模式 (例如："image"、"table")。</param>
-        /// <param name="activityTypeName">活動類型的名稱 (例如："活動"、"講座")，可選參數，預設為 null。</param>
+        /// <param name="activityTypeName">活動類別的名稱 (例如："活動"、"講座")，可選參數，預設為 null。</param>
         /// <param name="searchQuery">要搜尋的活動標題，可選參數，預設為 null。</param>
         /// <returns>包含分頁活動資料的 ActivityPagedViewModel。</returns>
         public async Task<ActivityPagedViewModel> GetPagedActivitiesAsync(
@@ -164,7 +164,7 @@ namespace test2.Services
             // 初始化查詢
             var query = _dbContext.Activities.AsQueryable();
 
-            // 如果有指定活動類型，就加上篩選條件
+            // 如果有指定活動類別，就加上篩選條件
             if (!string.IsNullOrEmpty(activityTypeName))
             {
                 query = query.Where(a => a.ActivityType != null && a.ActivityType.ActivityType1 == activityTypeName);

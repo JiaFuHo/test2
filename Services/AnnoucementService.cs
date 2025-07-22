@@ -21,7 +21,7 @@ namespace test2.Services
         }
 
         /// <summary>
-        /// 獲取指定數量的公告及其類型，若不傳入或傳入0，則獲取全部。
+        /// 獲取指定數量的公告及其類別，若不傳入或傳入0，則獲取全部。
         /// </summary>
         /// <param name="count">要獲取的公告數量</param>
         /// <returns>公告列表。</returns>
@@ -40,9 +40,9 @@ namespace test2.Services
         }
 
         /// <summary>
-        /// 獲取所有公告類型。
+        /// 獲取所有公告類別。
         /// </summary>
-        /// <returns>公告類型列表。</returns>
+        /// <returns>公告類別列表。</returns>
         public async Task<List<AnnouncementType>> GetAllAnnouncementTypesAsync()
         {
             return await _dbContext.AnnouncementTypes
@@ -51,7 +51,7 @@ namespace test2.Services
         }
 
         /// <summary>
-        /// 使用 EF Core 獲取分頁過後的公告列表，可選公告類型和標題篩選。
+        /// 使用 EF Core 獲取分頁過後的公告列表，可選公告類別和標題篩選。
         /// </summary>
         /// <param name="pageNumber">當前頁碼。</param>
         /// <param name="pageSize">每頁顯示筆數。</param>
@@ -71,7 +71,7 @@ namespace test2.Services
             // 初始化查詢
             var query = _dbContext.Announcements.AsQueryable();
 
-            // 如果有指定活動類型，就加上篩選條件
+            // 如果有指定活動類別，就加上篩選條件
             if (!string.IsNullOrEmpty(AnnouncementTypeName))
             {
                 query = query.Where(a => a.AnnouncementType != null && a.AnnouncementType.AnnouncementType1 == AnnouncementTypeName);

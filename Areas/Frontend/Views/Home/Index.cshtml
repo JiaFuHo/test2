@@ -1,7 +1,7 @@
 ﻿@model test2.Areas.Frontend.Models.ViewModels.HomeIndexViewModel
 
 @{
-    // 公告類型對應的 badge 顏色
+    // 公告類別對應的 badge 顏色
     var typeBadges = new Dictionary<int, string>
     {
         { 1, "bg-info text-dark" },    // 一般公告
@@ -363,7 +363,7 @@
             });
 
 
-            // 初始化監聽切換只顯示特定公告類型的下拉選單
+            // 初始化監聽切換只顯示特定公告類別的下拉選單
 
             if (typeSelector) {
                 typeSelector.addEventListener('change', async (event) => { // 監聽 change 事件
@@ -540,7 +540,7 @@
         /// </summary>
         /// <param name="pageNumber">當前頁碼</param>
         /// <param name="pageSize">每頁顯示數量</param>
-        /// <param name="type">公告類型ID (數字，或空字串表示全部)</param>
+        /// <param name="type">公告類別ID (數字，或空字串表示全部)</param>
         /// <param name="searchQuery">關鍵字查詢</param>
         async function updateAnnouncementList(pageNumber, pageSize, displayType, searchQuery = null) {
             try {

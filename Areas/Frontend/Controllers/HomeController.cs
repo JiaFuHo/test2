@@ -338,11 +338,11 @@ namespace test2.Areas.Frontend.Controllers
 
         [HttpPost]
         /// <summary>
-        /// 透過 AJAX POST 請求取得公告列表的資料，並可根據頁碼、公告類型進行篩選。
+        /// 透過 AJAX POST 請求取得公告列表的資料，並可根據頁碼、公告類別進行篩選。
         /// </summary>
         /// <param name="pageNumber">當前頁碼。</param>
         /// <param name="pageSize">每頁顯示公告數量</param>
-        /// <param name="displayType">要篩選的公告類型Id。</param>
+        /// <param name="displayType">要篩選的公告類別Id。</param>
         /// <param name="searchQuery">要搜尋的活動標題</param>
         public async Task<IActionResult> UpdateAnnouncementList(
             [FromForm] int pageNumber,
@@ -354,7 +354,7 @@ namespace test2.Areas.Frontend.Controllers
             {
 
                 // 確保 displayType 有預設值，避免 null 參考錯誤
-                displayType ??= "";  // 預設全部類型
+                displayType ??= "";  // 預設全部類別
 
                 HomeIndexViewModel viewModel;
 
@@ -401,11 +401,11 @@ namespace test2.Areas.Frontend.Controllers
 
         [HttpPost]
         /// <summary>
-        /// 透過 AJAX POST 請求取得活動列表的資料，並可根據頁碼、顯示模式和活動類型進行篩選。
+        /// 透過 AJAX POST 請求取得活動列表的資料，並可根據頁碼、顯示模式和活動類別進行篩選。
         /// </summary>
         /// <param name="page">當前頁碼。</param>
         /// <param name="displayMode">要切換到的顯示模式 ("image" 或 "table")。</param>
-        /// <param name="displayType">要篩選的活動類型 ("全部"、"講座" 等)。</param>
+        /// <param name="displayType">要篩選的活動類別 ("全部"、"講座" 等)。</param>
         /// <param name="searchQuery">要搜尋的活動標題</param>
         public async Task<IActionResult> UpdateActivityList(
             [FromForm] int page,
@@ -418,7 +418,7 @@ namespace test2.Areas.Frontend.Controllers
 
                 // 確保 displayMode 和 displayType 有預設值，避免 null 參考錯誤
                 displayMode ??= "image"; // 預設圖片模式
-                displayType ??= "全部";  // 預設全部類型
+                displayType ??= "全部";  // 預設全部類別
 
                 // 根據 displayMode 決定 pageSize
                 int pageSize = displayMode switch

@@ -666,7 +666,7 @@
     height: 600px; /* <--- 核心：設定固定高度 */
     /* 這裡不再需要 h-100 class，因為已經有了固定高度 */
     /* 如果 .card 已經有 display: flex; flex-direction: column; 等設定，
-       且沒有其他卡片類型會衝突，這裡可以不重複設定 */
+       且沒有其他卡片類別會衝突，這裡可以不重複設定 */
 }
 
 #newBooksCarousel .book-image-ratio-container {

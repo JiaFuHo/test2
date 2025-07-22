@@ -12,10 +12,11 @@
 <body>
     <!-- 頁首 -->
     <header class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+
         <div class="d-flex gap-3 align-items-end">
             <a href="@Url.Action("Index", "Manage", new { area = "Backend" })" class="text-white text-decoration-none fw-bold fs-4">📚 圖書館管理系統</a>
         </div>
-        <div class="d-flex gap-3 align-items-center">
+        <div class="d-flex gap-3 align-items-end">
             <form asp-area="Frontend" asp-controller="Access" asp-action="Logout" method="post">
                 <button type="submit" class="btn btn-link text-white text-decoration-none fw-bold fs-4">登出</button>
             </form>
@@ -26,32 +27,30 @@
         <!-- 各頁內容區塊 -->
         <div class="content  container-fluid">
             <div class="row">
-
                 <!--左邊-->
                 <div class="col-2">
-                    <div class="accordion" id="sidebarAccordion">
+                    <div class="accordion fs-4" id="sidebarAccordion">
                         <!-- 書籍管理 -->
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingBooks">
                                 <button class="accordion-button" type="button" data-bs-toggle="" data-bs-target="#collapseBooks">
-                                    📚 書籍管理
+                                    📚
                                 </button>
                             </h2>
                             <div id="collapseBooks" class="accordion-collapse collapse show" data-bs-parent="#sidebarAccordion">
                                 <div class="accordion-body">
                                     <div class="sub-category">
-                                        <a class="nav-link" href="#">書籍登錄</a>
-                                        <a class="nav-link" href="#">書籍查詢</a>
+                                        <a class="nav-link" href="#" id="BooksAdded">書籍登錄</a>
+                                        <a class="nav-link" href="#" id="BooksQuery">書籍管理</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <!-- 借閱與歸還 -->
                         <div class="accordion-item show">
                             <h2 class="accordion-header" id="headingBorrow">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="" data-bs-target="#collapseBorrow">
-                                    📖 借閱與歸還
+                                    📖
                                 </button>
                             </h2>
                             <div id="collapseBorrow" class="accordion-collapse collapse show" data-bs-parent="#sidebarAccordion">
@@ -67,13 +66,13 @@
                             </div>
                         </div>
                         <!-- 活動與推廣 -->
-                        <div class="accordion-item show">
+                        <div class="accordion-item show d-none">
                             <h2 class="accordion-header" id="headingBorrow">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="" data-bs-target="#collapseEvent">
-                                    🛠️活動管理
+                                    🛠️
                                 </button>
                             </h2>
-                            <div id="collapseEvent" class="accordion-collapse collapse show" data-bs-parent="#sidebarAccordion">
+                            <div id="collapseEvent" class="accordion-collapse collapse show " data-bs-parent="#sidebarAccordion">
                                 <div class="accordion-body">
                                     <div class="sub-category">
                                         <a class="nav-link" href="#">館內活動</a>
@@ -84,12 +83,10 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- 右側：頁面主內容 -->
                 <div class="col-10 py-2" id="content-panel">
                     @RenderBody()
                 </div>
-
             </div>
         </div>
     </div>
@@ -100,6 +97,8 @@
     </footer>
     <!-- Bootstrap JS -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-ui/dist/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="~/lib/jquery-ui/dist/jquery-ui.css" />
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="@Url.Content("~/js/Manage/zhongXian.js")"></script>
     @await RenderSectionAsync("Scripts", required: false)

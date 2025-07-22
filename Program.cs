@@ -6,6 +6,7 @@ using test2.Models;
 using test2.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using test2.Models.ManagementModels.Services;
 
 var facebookAppId = Environment.GetEnvironmentVariable("FACEBOOK_APP_ID");
 var facebookAppSecret = Environment.GetEnvironmentVariable("FACEBOOK_APP_SECRET");
@@ -70,6 +71,9 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 
 //memory service
 builder.Services.AddDistributedMemoryCache();
+
+//主要逾期預約排程
+builder.Services.AddHostedService<ScheduleServices>();
 
 //session service
 builder.Services.AddSession(options =>

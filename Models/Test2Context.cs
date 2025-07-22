@@ -1,6 +1,12 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+using test2.Models.ManagementModels.Services;
+using test2.Models.ManagementModels.ZhongXian.Appoimtment;
+using test2.Models.ManagementModels.ZhongXian.BookQuery;
+using test2.Models.ManagementModels.ZhongXian.Borrow;
+using test2.Models.ManagementModels.ZhongXian.Normal;
+using test2.Models.ManagementModels.ZhongXian.ReturnBook;
 
 namespace test2.Models;
 
@@ -64,10 +70,22 @@ public partial class Test2Context : DbContext
     public virtual DbSet<Type> reservationStatusId { get; set; }
     public virtual DbSet<Type> score { get; set; }
     public virtual DbSet<Type> feedback { get; set; }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=localhost;Database=test2;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Server=localhost;Database=test2;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
 
+    // 憲自訂 Start
+    public virtual DbSet<AppoimtmentKeywordDTO> AppoimtmentKeywordShows { get; set; }
+    public virtual DbSet<BorrowBookInfomationDTO> BorrowBookInfomationDTOs { get; set; }
+    public virtual DbSet<MessageDTO> BorrwoMessageDTOs { get; set; }
+    public virtual DbSet<MessageDTO2> MessageDTO2 { get; set; }
+    public virtual DbSet<LanguageAndTypeViewModel> LanguageAndTypes { get; set; }
+    public virtual DbSet<BookQueryDTO> BookQueryDTOs { get; set; }
+    public virtual DbSet<NotificationUserDTO> NotificationUserDTOs { get; set; }
+    public virtual DbSet<ReturnDTO> LateReturnDTOs { get; set; }
+    public virtual DbSet<OverDueDTO> OverDueDTOs { get; set; }
+    public virtual DbSet<ReturnBookDTO> ReturnBookDTOs { get; set; }
+    ///
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Activity>(entity =>
@@ -473,7 +491,16 @@ public partial class Test2Context : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("type");
         });
-
+        modelBuilder.Entity<BorrowBookInfomationDTO>().HasNoKey();
+        modelBuilder.Entity<MessageDTO>().HasNoKey();
+        modelBuilder.Entity<MessageDTO2>().HasNoKey();
+        modelBuilder.Entity<AppoimtmentKeywordDTO>().HasNoKey();
+        modelBuilder.Entity<LanguageAndTypeViewModel>().HasNoKey();
+        modelBuilder.Entity<BookQueryDTO>().HasNoKey();
+        modelBuilder.Entity<NotificationUserDTO>().HasNoKey();
+        modelBuilder.Entity<ReturnDTO>().HasNoKey();
+        modelBuilder.Entity<OverDueDTO>().HasNoKey();
+        modelBuilder.Entity<ReturnBookDTO>().HasNoKey();
         OnModelCreatingPartial(modelBuilder);
     }
 
