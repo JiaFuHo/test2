@@ -15,45 +15,45 @@ var googleClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRE
 
 var builder = WebApplication.CreateBuilder(args);
 
-#region µù¥U¦Û­qªA°È ©M ¼W¥[¥~³¡ÅçÃÒ³]©w
-// µù¥U ActivityService
+#region ï¿½ï¿½ï¿½Uï¿½Û­qï¿½Aï¿½ï¿½ ï¿½M ï¿½Wï¿½[ï¿½~ï¿½ï¿½ï¿½ï¿½ï¿½Ò³]ï¿½w
+// ï¿½ï¿½ï¿½U ActivityService
 builder.Services.AddScoped<ActivityService>();
 
-// µù¥U AnnouncementService
+// ï¿½ï¿½ï¿½U AnnouncementService
 builder.Services.AddScoped<AnnouncementService>();
 
-// µù¥U AnnouncementService
+// ï¿½ï¿½ï¿½U AnnouncementService
 builder.Services.AddScoped<UserService>();
 
-// cookie service ( Google ÅçÃÒ³]©w)
-builder.Services.AddAuthentication(options => // ­×§ï¡G±N AddAuthentication ½Õ¾ã¬°±µ¦¬ options ©e¬£
+// cookie service(Google ï¿½ï¿½ï¿½Ò³]ï¿½w)
+builder.Services.AddAuthentication(options => // ï¿½×§ï¿½Gï¿½N AddAuthentication ï¿½Õ¾ã¬°ï¿½ï¿½ï¿½ï¿½ options ï¿½eï¿½ï¿½
 {
-    // ³]©w¹w³]ªºÅçÃÒ¤è®×¬° Cookie »{ÃÒ
+    // ï¿½]ï¿½wï¿½wï¿½]ï¿½ï¿½ï¿½ï¿½ï¿½Ò¤ï¿½×¬ï¿½ Cookie ï¿½{ï¿½ï¿½
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    // ³]©w¹w³]ªº¬D¾Ô¤è®×¬° Google ÅçÃÒ¡A·í»Ý­n¥~³¡µn¤J®É·|¨Ï¥Î
+    // ï¿½]ï¿½wï¿½wï¿½]ï¿½ï¿½ï¿½Dï¿½Ô¤ï¿½×¬ï¿½ Google ï¿½ï¿½ï¿½Ò¡Aï¿½ï¿½ï¿½Ý­nï¿½~ï¿½ï¿½ï¿½nï¿½Jï¿½É·|ï¿½Ï¥ï¿½
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 })
 
-.AddGoogle(googleOptions => // ·s¼W¡GGoogle ÅçÃÒ³]©w
+.AddGoogle(googleOptions => // ï¿½sï¿½Wï¿½GGoogle ï¿½ï¿½ï¿½Ò³]ï¿½w
 {
     googleOptions.ClientId = googleClentId!;
     googleOptions.ClientSecret = googleClientSecret!;
 
-    // ³]©w­n¦V Google ½Ð¨Dªº¨Ï¥ÎªÌ¸ê®Æ½d³ò
-    // "profile" ¥]§t©m¦W¡BÀY¹³µ¥°ò¥»¸ê®Æ
-    // "email" ¥]§t¨Ï¥ÎªÌªº¹q¤l¶l¥ó¦a§}
+    // ï¿½]ï¿½wï¿½nï¿½V Google ï¿½Ð¨Dï¿½ï¿½ï¿½Ï¥ÎªÌ¸ï¿½Æ½dï¿½ï¿½
+    // "profile" ï¿½]ï¿½tï¿½mï¿½Wï¿½Bï¿½Yï¿½ï¿½ï¿½ï¿½ï¿½ò¥»¸ï¿½ï¿½
+    // "email" ï¿½]ï¿½tï¿½Ï¥ÎªÌªï¿½ï¿½qï¿½lï¿½lï¿½ï¿½aï¿½}
     googleOptions.Scope.Add("profile");
     googleOptions.Scope.Add("email");
 })
 
-.AddFacebook(facebookOptions => // ·s¼W¡GFacebook ÅçÃÒ³]©w
+.AddFacebook(facebookOptions => // ï¿½sï¿½Wï¿½GFacebook ï¿½ï¿½ï¿½Ò³]ï¿½w
 {
     facebookOptions.AppId = facebookAppId!;
     facebookOptions.AppSecret = facebookAppSecret!;
 
-    // ¥u­n¨D¤½¶}­Ó¤H¸ê®Æ (¥]§t©m¦W)¡C
-    // Facebook ªº 'public_profile' ½d³ò¹w³]¥]§t©m¦W¡C
+    // ï¿½uï¿½nï¿½Dï¿½ï¿½ï¿½}ï¿½Ó¤Hï¿½ï¿½ï¿½ (ï¿½]ï¿½tï¿½mï¿½W)ï¿½C
+    // Facebook ï¿½ï¿½ 'public_profile' ï¿½dï¿½ï¿½wï¿½]ï¿½]ï¿½tï¿½mï¿½Wï¿½C
     facebookOptions.Scope.Add("public_profile");
     facebookOptions.Scope.Add("email");
 });
@@ -72,7 +72,7 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 //memory service
 builder.Services.AddDistributedMemoryCache();
 
-//¥D­n¹O´Á¹w¬ù±Æµ{
+//ï¿½Dï¿½nï¿½Oï¿½ï¿½ï¿½wï¿½ï¿½ï¿½Æµ{
 builder.Services.AddHostedService<ScheduleServices>();
 
 //session service
