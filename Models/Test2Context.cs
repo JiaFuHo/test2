@@ -63,18 +63,17 @@ public partial class Test2Context : DbContext
 
     public virtual DbSet<Type> Types { get; set; }
 
-    //custom
+    // custom
     public virtual DbSet<Type> cId { get; set; }
     public virtual DbSet<Type> collectionId { get; set; }
     public virtual DbSet<Type> reservationDate { get; set; }
     public virtual DbSet<Type> reservationStatusId { get; set; }
     public virtual DbSet<Type> score { get; set; }
     public virtual DbSet<Type> feedback { get; set; }
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=localhost;Database=test2;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
 
-    // 憲自訂 Start
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer("Server=DESKTOP-I57EDSL\\SQLEXPRESS;Database=test2;Integrated Security=True;Trusted_Connection=True;TrustServerCertificate=True;User ID=sa;Password=1234;");
+
+    // 憲custom
     public virtual DbSet<AppoimtmentKeywordDTO> AppoimtmentKeywordShows { get; set; }
     public virtual DbSet<BorrowBookInfomationDTO> BorrowBookInfomationDTOs { get; set; }
     public virtual DbSet<MessageDTO> BorrwoMessageDTOs { get; set; }
@@ -85,7 +84,7 @@ public partial class Test2Context : DbContext
     public virtual DbSet<ReturnDTO> LateReturnDTOs { get; set; }
     public virtual DbSet<OverDueDTO> OverDueDTOs { get; set; }
     public virtual DbSet<ReturnBookDTO> ReturnBookDTOs { get; set; }
-    ///
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Activity>(entity =>
@@ -291,6 +290,8 @@ public partial class Test2Context : DbContext
             entity.Property(e => e.CPhone)
                 .HasMaxLength(20)
                 .HasColumnName("cPhone");
+            entity.Property(e => e.FacebookId).HasMaxLength(255);
+            entity.Property(e => e.GoogleId).HasMaxLength(255);
             entity.Property(e => e.Permission).HasColumnName("permission");
         });
 
@@ -491,6 +492,8 @@ public partial class Test2Context : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("type");
         });
+
+        // 憲custom
         modelBuilder.Entity<BorrowBookInfomationDTO>().HasNoKey();
         modelBuilder.Entity<MessageDTO>().HasNoKey();
         modelBuilder.Entity<MessageDTO2>().HasNoKey();
@@ -501,6 +504,7 @@ public partial class Test2Context : DbContext
         modelBuilder.Entity<ReturnDTO>().HasNoKey();
         modelBuilder.Entity<OverDueDTO>().HasNoKey();
         modelBuilder.Entity<ReturnBookDTO>().HasNoKey();
+
         OnModelCreatingPartial(modelBuilder);
     }
 

@@ -1,6 +1,7 @@
 ﻿using Isopoh.Cryptography.Argon2;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -48,11 +49,11 @@ namespace test2.Areas.Frontend.Controllers
                 var borrowCount = await _context.Borrows.CountAsync(x => x.CId == guest.CId);
 
                 var guestClaim = new List<Claim>{
-                new Claim(ClaimTypes.Name, guest.CAccount),
-                new Claim(ClaimTypes.NameIdentifier, guest.CId.ToString()),
-                new Claim("Name", guest.CName),
-                new Claim("BorrowStatus", borrowStatus.ToString()),
-                new Claim("BorrowCount", borrowCount.ToString())
+                    new Claim(ClaimTypes.Name, guest.CAccount),
+                    new Claim(InternalClaimTypes.InternalId, guest.CId.ToString()),
+                    new Claim("Name", guest.CName),
+                    new Claim("BorrowStatus", borrowStatus.ToString()),
+                    new Claim("BorrowCount", borrowCount.ToString())
                 };
 
                 var guessAccess = new ClaimsIdentity(guestClaim, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -62,6 +63,46 @@ namespace test2.Areas.Frontend.Controllers
                 return RedirectToAction("Index", "Home", new { area = "Frontend" });
             }
         }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult AccessCardE(string provider, string userAccount)
+        //{
+        //    var redirectUrl = Url.Action("LoginE", "Access", new { Area = "Frontend" });
+        //    var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+
+        //    properties.Items["provider"] = provider;
+        //    properties.Items["userAccount"] = userAccount;
+
+        //    if (provider == "Facebook") { properties.Parameters.Add("auth_type", "reauthenticate"); }
+        //    else { properties.Parameters.Add("prompt", "select_account"); }
+
+        //    return Challenge(properties, provider);
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> LoginE()
+        //{
+        //    var authentication = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+
+        //    if (!authentication.Succeeded || authentication.Principal == null) { return RedirectToAction("Client", "Home", new { Area = "Frontend" }); }
+
+        //    var externalId = authentication.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        //    authentication.Properties.Items.TryGetValue("provider", out var provider);
+        //    authentication.Properties.Items.TryGetValue("userAccount", out var userAccount);
+
+        //    var userAccountX = await _context.Clients.FirstOrDefaultAsync(x => x.CAccount == userAccount);
+
+        //    if (provider == "Facebook") { userAccountX!.FacebookId = externalId; }
+        //    else { userAccountX!.GoogleId = externalId; }
+
+        //    await _context.SaveChangesAsync();
+
+        //    await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+        //    return RedirectToAction("Client");
+        //}
 
         [HttpGet]
         public IActionResult LoginM() { return View(new Guest()); }
@@ -92,7 +133,7 @@ namespace test2.Areas.Frontend.Controllers
             {
                 var guestClaim = new List<Claim>{
                     new Claim(ClaimTypes.Name, guest.CAccount),
-                    new Claim(ClaimTypes.NameIdentifier, guest.CId.ToString()),
+                    new Claim(InternalClaimTypes.InternalId, guest.CId.ToString()),
                     new Claim("Name", guest.CName),
                     new Claim("Permission", guest.Permission.ToString())
                 };

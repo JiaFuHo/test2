@@ -18,7 +18,7 @@
                 </tr>
             </thead>
             <tbody class="text-start">
-                @foreach (var message in client!.Notifications)
+                @foreach (var message in client!.Notifications.Reverse())
                 {
                     <tr>
                         <td>@Html.DisplayFor(modelItem => message!.NotificationDate)</td>
