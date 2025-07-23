@@ -5,11 +5,12 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using test2.Models;
+using test2.Controllers;
+using test2.Services;
+using test2.Areas.Frontend.Models;
 using test2.Areas.Frontend.Models.Dtos;
 using test2.Areas.Frontend.Models.ViewModels;
-using test2.Controllers;
-using test2.Models;
-using test2.Services;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -173,7 +174,7 @@ namespace test2.Areas.Frontend.Controllers
         [HttpGet]
         public async Task<IActionResult> Client()
         {
-            var userNameX = Convert.ToString(ViewData["UserName"]);
+            var userNameX = Convert.ToString(ViewData["Name"]);
 
             IQueryable<Client> client = _context.Clients.Include(x => x.Reservations).ThenInclude(y => y.ReservationStatus)
                                                                                      .Include(x => x.Reservations).ThenInclude(y => y.Collection).ThenInclude(z => z.Author)
@@ -511,7 +512,7 @@ namespace test2.Areas.Frontend.Controllers
             }
 
             // 已登入，繼續報名邏輯
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdClaim = User.FindFirstValue(InternalClaimTypes.IId);
             if (!int.TryParse(userIdClaim, out int clientId))
             {
                 // 無法取得使用者 ID (理論上登入後不會發生，但做個防範)

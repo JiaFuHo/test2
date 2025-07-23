@@ -9,17 +9,19 @@ namespace test2.Controllers
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var userAccount = User.FindFirst(ClaimTypes.Name);
-            var userId = User.FindFirst(InternalClaimTypes.InternalId);
-            var userName = User.FindFirst("Name");
-            var userBorrowStatus = User.FindFirst("BorrowStatus");
-            var userBorrowCount = User.FindFirst("BorrowCount");
+            var userAccount = User.FindFirst(InternalClaimTypes.IAccount);
+            var userId = User.FindFirst(InternalClaimTypes.IId);
+            var userName = User.FindFirst(InternalClaimTypes.IName);
+            var userBorrowStatus = User.FindFirst(InternalClaimTypes.IBorrowStatus);
+            var userBorrowCount = User.FindFirst(InternalClaimTypes.IBorrowCount);
+            var userPermission = User.FindFirst(InternalClaimTypes.IPermission);
 
-            ViewData["UserAccount"] = (userAccount != null) ? userAccount.Value : string.Empty;
-            ViewData["UserId"] = (userId != null) ? userId.Value : string.Empty;
-            ViewData["UserName"] = (userName != null) ? userName.Value : string.Empty;
-            ViewData["UserBorrowStatus"] = (userBorrowStatus != null) ? userBorrowStatus.Value : string.Empty;
-            ViewData["UserBorrowCount"] = (userBorrowCount != null) ? userBorrowCount.Value : string.Empty;
+            ViewData["Account"] = (userAccount != null) ? userAccount.Value : string.Empty;
+            ViewData["Id"] = (userId != null) ? userId.Value : string.Empty;
+            ViewData["Name"] = (userName != null) ? userName.Value : string.Empty;
+            ViewData["BorrowStatus"] = (userBorrowStatus != null) ? userBorrowStatus.Value : string.Empty;
+            ViewData["BorrowCount"] = (userBorrowCount != null) ? userBorrowCount.Value : string.Empty;
+            ViewData["Permission"] = (userPermission != null) ? userPermission.Value : string.Empty;
 
             base.OnActionExecuting(context);
         }

@@ -49,11 +49,11 @@ namespace test2.Areas.Frontend.Controllers
                 var borrowCount = await _context.Borrows.CountAsync(x => x.CId == guest.CId);
 
                 var guestClaim = new List<Claim>{
-                    new Claim(ClaimTypes.Name, guest.CAccount),
-                    new Claim(InternalClaimTypes.InternalId, guest.CId.ToString()),
-                    new Claim("Name", guest.CName),
-                    new Claim("BorrowStatus", borrowStatus.ToString()),
-                    new Claim("BorrowCount", borrowCount.ToString())
+                    new Claim(InternalClaimTypes.IAccount, guest.CAccount),
+                    new Claim(InternalClaimTypes.IId, guest.CId.ToString()),
+                    new Claim(InternalClaimTypes.IName, guest.CName),
+                    new Claim(InternalClaimTypes.IBorrowStatus, borrowStatus.ToString()),
+                    new Claim(InternalClaimTypes.IBorrowCount, borrowCount.ToString())
                 };
 
                 var guessAccess = new ClaimsIdentity(guestClaim, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -87,10 +87,10 @@ namespace test2.Areas.Frontend.Controllers
 
         //    if (!authentication.Succeeded || authentication.Principal == null) { return RedirectToAction("Client", "Home", new { Area = "Frontend" }); }
 
-        //    var externalId = authentication.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
         //    authentication.Properties.Items.TryGetValue("provider", out var provider);
         //    authentication.Properties.Items.TryGetValue("userAccount", out var userAccount);
+
+        //    var externalId = authentication.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         //    var userAccountX = await _context.Clients.FirstOrDefaultAsync(x => x.CAccount == userAccount);
 
@@ -132,10 +132,10 @@ namespace test2.Areas.Frontend.Controllers
             else
             {
                 var guestClaim = new List<Claim>{
-                    new Claim(ClaimTypes.Name, guest.CAccount),
-                    new Claim(InternalClaimTypes.InternalId, guest.CId.ToString()),
-                    new Claim("Name", guest.CName),
-                    new Claim("Permission", guest.Permission.ToString())
+                    new Claim(InternalClaimTypes.IAccount, guest.CAccount),
+                    new Claim(InternalClaimTypes.IId, guest.CId.ToString()),
+                    new Claim(InternalClaimTypes.IName, guest.CName),
+                    new Claim(InternalClaimTypes.IPermission, guest.Permission.ToString())
                 };
 
                 if (guest.Permission == 2) { guestClaim.Add(new Claim(ClaimTypes.Role, "Admin")); }
