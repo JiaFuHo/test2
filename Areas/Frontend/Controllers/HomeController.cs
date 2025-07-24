@@ -282,6 +282,8 @@ namespace test2.Areas.Frontend.Controllers
             return RedirectToAction("Client");
         }
 
+        #region 有修改的部分
+
         public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string displayType = "", string searchQuery = "")
         {
             var viewModel = new HomeIndexViewModel();
@@ -290,6 +292,8 @@ namespace test2.Areas.Frontend.Controllers
             {
                 // 從 AnnouncementService 獲取公告資料
                 viewModel = await _announcementService.GetPagedAnnouncementsAsync(pageNumber, pageSize, displayType, searchQuery);
+                // 從 ActivityService 獲取公告資料
+                viewModel.Activities = await _activityService.GetActivitiesAsync();
 
                 // 查詢最新書籍 (分兩階段處理以避免翻譯錯誤)
                 // 第一階段：先從資料庫取出所有書籍及其 Collection 資訊
@@ -336,6 +340,8 @@ namespace test2.Areas.Frontend.Controllers
 
             return View(viewModel);
         }
+
+        #endregion
 
         [HttpPost]
         /// <summary>
@@ -586,10 +592,26 @@ namespace test2.Areas.Frontend.Controllers
             return View();
         }
 
+        #region 有修改的部分
+
         [HttpGet]
         public IActionResult Register()
         {
-            return View(new UserRegistrationDto());
+            UserRegistrationDto model = new UserRegistrationDto();
+
+            if (TempData["PreFillName"] != null)
+            {
+                model.Name = TempData["PreFillName"] as string ?? string.Empty;
+            }
+            if (TempData["PreFillPhoneNumber"] != null)
+            {
+                model.PhoneNumber = TempData["PreFillPhoneNumber"] as string ?? string.Empty;
+            }
+            if (TempData["PreFillEmail"] != null)
+            {
+                model.Email = TempData["PreFillEmail"] as string ?? string.Empty;
+            }
+            return View(model);
         }
 
         [HttpPost]
@@ -605,7 +627,7 @@ namespace test2.Areas.Frontend.Controllers
                 return View(model);
             }
 
-            var registerResult = await _userService.UserRegister(model.PhoneNumber, model.Email, model.Password);
+            var registerResult = await _userService.RegisterNewUser(model.Name, model.PhoneNumber, model.Email, model.Password);
 
             if (registerResult.IsSuccess)
             {
@@ -620,9 +642,19 @@ namespace test2.Areas.Frontend.Controllers
                 TempData["Result"] = "fail";
                 TempData["ShowModal"] = true;
                 TempData["ResultMessage"] = registerResult.FailMessage;
-                return View(model);
+
+                // 失敗時，將部分數據存入 TempData
+                TempData["PreFillName"] = model.Name;
+                TempData["PreFillPhoneNumber"] = model.PhoneNumber;
+                TempData["PreFillEmail"] = model.Email;
+
+                // 重定向到 GET 版本的 Register 避免重複提交表單問題
+                return RedirectToAction("Register");
             }
         }
+
+        #endregion
+
         #endregion
     }
 }

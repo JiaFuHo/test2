@@ -109,9 +109,9 @@ h6 {
         }
 
     .login-card .btn-success {
-        background-color: var(--c-green2-100);
+        background-color: #6a9955;
         /* 更柔和的綠色按鈕 */
-        border-color: #e9f0e6;
+        border-color: #6a9955;
         padding: 0.9rem 2.5rem;
         border-radius: 8px;
         font-weight: 600;
@@ -121,7 +121,7 @@ h6 {
     }
 
         .login-card .btn-success:hover {
-            background-color: #6a9955;
+            background-color: #4a6b52;
             /* 滑鼠移過變成深綠色 */
             border-color: #4a6b52;
         }
@@ -142,19 +142,6 @@ h6 {
         font-weight: bold;
         font-family: 'Noto Sans TC', '微軟正黑體', 'Microsoft JhengHei', sans-serif;
         display: none; /* 註冊頁面通常沒有第三方登入按鈕，所以先隱藏 */
-    }
-
-/* 隱私權政策、會員條款樣式 */
-
-.btn-secondary {
-    background-color: var(--c-green2-100);
-    border-color: #e9f0e6;
-}
-
-    .btn-secondary:hover {
-        background-color: #6a9955;
-        /* 滑鼠移過變成深綠色 */
-        border-color: #4a6b52;
     }
 
 /* 調整註冊頁面的連結佈局 */
@@ -189,7 +176,7 @@ h6 {
 }
 
 /* 當 input 有驗證錯誤時，顯示 .error-message */
-.input-validation-error + .error-message{
+.input-validation-error + .error-message {
     visibility: visible;
     opacity: 1;
 }

@@ -64,6 +64,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         googleOptions.ClientSecret = googleClientSecret!;
         googleOptions.Scope.Add("profile");
         googleOptions.Scope.Add("email");
+
+        // 當 Google 拒絕存取 (例如使用者按取消) 時，導向到這個路徑
+        googleOptions.AccessDeniedPath = "/Frontend/Home/Index";
     })
     .AddFacebook(facebookOptions =>
     {
@@ -71,6 +74,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         facebookOptions.AppSecret = facebookAppSecret!;
         facebookOptions.Scope.Add("public_profile");
         facebookOptions.Scope.Add("email");
+
+        // 當 Facebook 拒絕存取 (例如使用者按取消) 時，導向到這個路徑
+        facebookOptions.AccessDeniedPath = "/Frontend/Home/Index";
     });
 
 var app = builder.Build();

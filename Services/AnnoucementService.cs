@@ -101,14 +101,12 @@ namespace test2.Services
                                        .OrderBy(at => at.AnnouncementType1)
                                        .ToListAsync();
 
-            var activities = await _activityService.GetActivitiesAsync();
 
             // 將結果封裝到 HomeIndexViewModel
             var viewModel = new HomeIndexViewModel()
             {
                 Announcements = announcements,
                 AnnouncementTypes = announcementsTypes,
-                Activities = activities,
                 CurrentPage = pageNumber,
                 CurrentType = AnnouncementTypeName,
                 PageSize = pageSize,

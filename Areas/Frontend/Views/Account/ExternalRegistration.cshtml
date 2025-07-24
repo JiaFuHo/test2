@@ -1,33 +1,21 @@
-﻿@model test2.Areas.Frontend.Models.Dtos.UserRegistrationDto
+﻿@model test2.Areas.Frontend.Models.Dtos.ExternalRegistrationDto
+
+@{
+    Layout = "~/Areas/Frontend/Views/Shared/_Layout/_Activity.cshtml";
+}
 
 @await Html.PartialAsync("~/Areas/Frontend/Views/Shared/_Partial/_modal.cshtml")
 
 <main>
     <div class="login-card">
-        <h3 style="color: var(--c-green2-100)">會員註冊</h3>
-        <form asp-controller="Home" asp-action="Register" method="post">
-            <div>
-                <label asp-for="Name" class="form-label">姓名</label>
-                <input asp-for="Name" class="form-control" placeholder="請輸入姓名"/>
-                <div class="error-message">
-                    <i class="icon-lg bi bi-exclamation-circle-fill"></i>
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-            </div>
+        <h3>完成會員資料</h3>
+        <form asp-controller="Account" asp-action="ExternalRegistration" method="post">
             <div>
                 <label asp-for="PhoneNumber" class="form-label">電話號碼</label>
                 <input asp-for="PhoneNumber" class="form-control" placeholder="請輸入您的電話號碼">
                 <div class="error-message">
                     <i class="icon-lg bi bi-exclamation-circle-fill"></i>
                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
-            </div>
-            <div>
-                <label asp-for="Email" class="form-label">電子信箱</label>
-                <input asp-for="Email" class="form-control" placeholder="請輸入您的電子信箱">
-                <div class="error-message">
-                    <i class="icon-lg bi bi-exclamation-circle-fill"></i>
-                    <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
             </div>
             <div>
@@ -47,15 +35,12 @@
                 </div>
             </div>
             <div class="d-grid mb-3">
-                <button type="submit" class="btn btn-success">立即註冊</button>
+                <button type="submit" class="btn btn-success">完成設定</button>
             </div>
             <div class="register-links">
                 <a href="#" class="me-2" data-bs-toggle="modal" data-bs-target="#libraryTermsModal">會員條款</a>
                 <span>|</span>
                 <a href="#" class="ms-2" data-bs-toggle="modal" data-bs-target="#privacyPolicyModal">隱私權政策</a>
-            </div>
-            <div class="form-text">
-                已經有帳號了？ <a href="@Url.Action("LoginC", "Access")">登入</a>
             </div>
         </form>
     </div>
@@ -75,11 +60,11 @@
             </div>
             <div class="modal-body">
                 <p id="MessageContent"></p>
-                <p id="countdownMessage">將在 <span id="countdown">5</span> 秒後自動跳轉到登入頁面。</p>
+                <p id="countdownMessage">將在 <span id="countdown">30</span> 秒後自動跳轉到首頁。</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
-                <button id="redirect-btn" type="button" class="btn btn-primary" onclick="window.location.href='@Url.Action("Login", "Home", new { area = "Frontend" })'">立即跳轉</button>
+                <button id="redirect-btn" type="button" class="btn btn-primary" onclick="window.location.href='@Url.Action("Index", "Home", new { area = "Frontend" })'">立即跳轉</button>
             </div>
         </div>
     </div>
@@ -192,7 +177,7 @@
                     myModal.show(); // 顯示 Modal
 
                     let countdownElement = $('#countdown');
-                    let countdown = 5; // 初始倒數秒數
+                    let countdown = 30; // 初始倒數秒數
                     let timer; // 用來儲存 setTimeout 的 ID
 
                     // 定義倒數函式

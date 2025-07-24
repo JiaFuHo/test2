@@ -36,12 +36,20 @@
     }
 
 .btn-primary {
-    background-color: #5cb85c;
+    background-color: var(--c-green2-100);
     border-color: #e9f0e6;
     /*    --bs-btn-hover-bg: #3d793d;
     --bs-btn-active-bg: #212529;
     --bs-btn-active-border-color: #3d793d;*/
 }
+
+    .btn-primary:hover {
+        background-color: #5cb85c;
+        border-color: #e9f0e6;
+        /*    --bs-btn-hover-bg: #3d793d;
+        --bs-btn-active-bg: #212529;
+        --bs-btn-active-border-color: #3d793d;*/
+    }
 
 #main-container {
     display: flex;
@@ -306,7 +314,7 @@
     align-items: center;
     /* 為了箭頭的定位 */
     position: relative;
-    max-height: 100vh;
+    max-height: 75vh;
 }
 
 /* 輪播容器，負責旋轉 */
@@ -322,7 +330,7 @@
     transform-origin: center center;
     /* 旋轉中心設定在中間 */
     transition: transform 0.8s ease-out; /* 加入過渡效果，讓旋轉更平滑 */
-    transform: translateY(20vh) translateZ(-500px);
+    transform: translateZ(-500px);
 }
 
 /* 輪播項目 */
@@ -345,15 +353,18 @@
     /* 計算方式：rotateY(360deg / 項目數量 * 當前項目索引) translateZ(圓半徑) */
     /* 這裡的 translateZ(500px) 是半徑，可以根據實際效果調整 */
     .my-carousel-item:nth-child(1) {
-        transform: rotateY(0deg) translateZ(500px);
+        top: 50%;
+        transform: rotateY(0deg) translateY(-50%) translateZ(500px);
     }
 
     .my-carousel-item:nth-child(2) {
-        transform: rotateY(120deg) translateZ(500px);
+        top: 50%;
+        transform: rotateY(120deg) translateY(-50%) translateZ(500px);
     }
 
     .my-carousel-item:nth-child(3) {
-        transform: rotateY(240deg) translateZ(500px);
+        top: 50%;
+        transform: rotateY(240deg) translateY(-50%) translateZ(500px);
     }
 
     /* 圖片樣式 */
@@ -370,15 +381,14 @@
 /* 旋轉控制箭頭樣式 */
 .carousel-control-btn {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
     background-color: rgba(0, 0, 0, 0.5);
+    top: 50%;
     color: white;
     border: none;
-    padding: 15px 10px;
+    padding: 30px 20px;
     cursor: pointer;
     z-index: 10;
-    font-size: 2rem;
+    font-size: 3rem;
     border-radius: 5px;
     transition: background-color 0.3s ease;
 }
@@ -389,10 +399,12 @@
 
 .my-carousel-control-prev {
     left: 10px;
+    transform: translateX(-20vw) translateY(-50%) translateZ(-500px);
 }
 
 .my-carousel-control-next {
     right: 10px;
+    transform: translateX(20vw) translateY(-50%) translateZ(-500px);
 }
 
 /* ------------------------------------------------------------------------------------ */
@@ -637,26 +649,26 @@
 }
 
 /* 卡片標題的基礎樣式 */
-/*.card-title {
-    height: 3em;*/ /* 確保至少有 2 行文字高度 */
-    /*overflow: hidden;
-    text-overflow: ellipsis;
+.card-title {
+    overflow: hidden;
+    text-overflow: ellipsis; /* 超出部分顯示省略號 */
     display: -webkit-box;
-    -webkit-line-clamp: 2;*/ /* 限制顯示兩行 */
-    /*-webkit-box-orient: vertical;
-    white-space: normal;*/ /* 允許換行 */
-    /*margin-top: auto;*/ /* 讓標題盡量靠下 */
-    /*margin-bottom: 0.25rem;
-}*/
+    -webkit-line-clamp: 1; /* 限制顯示一行 */
+    text-overflow: ellipsis; /* 超出部分顯示省略號 */
+    -webkit-box-orient: vertical;
+    white-space: normal; /* 允許換行 */
+    margin-top: auto; /* 讓標題盡量靠下 */
+    margin-bottom: 0.25rem;
+}
 
 /* 卡片文字的基礎樣式 */
-/*.card-text {
-    height: 1.5em;*/ /* 確保 1 行文字高度 */
-    /*overflow: hidden;
-    white-space: nowrap;*/ /* 不換行 */
-    /*text-overflow: ellipsis;*/ /* 超出部分顯示省略號 */
-    /*margin-bottom: 0;
-}*/
+.card-text {
+    height: 1.5em; /* 確保 1 行文字高度 */
+    overflow: hidden;
+    white-space: nowrap; /* 不換行 */
+    text-overflow: ellipsis; /* 超出部分顯示省略號 */
+    margin-bottom: 0;
+}
 
 /* ----------------------------------------------- */
 /* 針對新書推薦輪播圖的特定設定 (覆蓋或細化通用設定) */
@@ -676,4 +688,9 @@
 /* 新書推薦的 card-body 會自動佔據剩下空間，所以這裡只要寫 flex: 1 即可 */
 #newBooksCarousel .card-body {
     flex: 1;
+}
+
+.pagination-buttons > .btn.active {
+    background-color: var(--c-green2-100);
+    border-color: var(--c-green2-100);
 }

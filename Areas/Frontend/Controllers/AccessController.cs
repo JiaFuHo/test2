@@ -87,10 +87,10 @@ namespace test2.Areas.Frontend.Controllers
 
         //    if (!authentication.Succeeded || authentication.Principal == null) { return RedirectToAction("Client", "Home", new { Area = "Frontend" }); }
 
+        //    var externalId = authentication.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
         //    authentication.Properties.Items.TryGetValue("provider", out var provider);
         //    authentication.Properties.Items.TryGetValue("userAccount", out var userAccount);
-
-        //    var externalId = authentication.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         //    var userAccountX = await _context.Clients.FirstOrDefaultAsync(x => x.CAccount == userAccount);
 
