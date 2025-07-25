@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Net.Mail;
 using System.Security.Claims;
+using test2.Areas.Frontend.Models;
 using test2.Areas.Frontend.Models.Dtos;
 using test2.Models;
 
@@ -42,7 +43,7 @@ namespace test2.Services
                 return result;
             }
 
-            else 
+            else
             {
                 var newUser = new Client
                 {
@@ -154,11 +155,11 @@ namespace test2.Services
             var borrowCount = await _context.Borrows.CountAsync(x => x.CId == user!.CId);
 
             var claims = new List<Claim>{
-                new Claim(ClaimTypes.Name, user!.CAccount),
-                new Claim(ClaimTypes.NameIdentifier, user!.CId.ToString()),
-                new Claim("Name", user!.CName),
-                new Claim("BorrowStatus", borrowStatus.ToString()),
-                new Claim("BorrowCount", borrowCount.ToString())
+                new Claim(InternalClaimTypes.IAccount, user!.CAccount),
+                new Claim(InternalClaimTypes.IId, user!.CId.ToString()),
+                new Claim(InternalClaimTypes.IName, user!.CName),
+                new Claim(InternalClaimTypes.IBorrowStatus, borrowStatus.ToString()),
+                new Claim(InternalClaimTypes.IBorrowCount, borrowCount.ToString())
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
