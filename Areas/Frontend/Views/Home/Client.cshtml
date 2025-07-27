@@ -58,4 +58,53 @@
             </div>
         </div>
     </div>
+
+    @* Modal 的 HTML 結構 *@
+    <div class="modal fade" id="registrationMessageModal" tabindex="-1" aria-labelledby="registrationMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registrationMessageModalLabel">註冊結果</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="MessageContent"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(function() {
+            // 從 TempData 取得旗標和訊息
+            var showModal = @((bool)(TempData["ShowModal"] ?? false) ? "true" : "false");
+            var result = "@Html.Raw((string)TempData["Result"] == "success" ? "success" : "fail")";
+            var resultMessage = "@Html.Raw(TempData["ResultMessage"] ?? "")";
+
+            if (showModal) {
+                // 從 TempData 取得旗標和訊息
+                var showModal = @((bool)(TempData["ShowModal"] ?? false) ? "true" : "false");
+                var result = "@Html.Raw((string)TempData["Result"] == "success" ? "success" : "fail")";
+                var resultMessage = "@Html.Raw(TempData["ResultMessage"] ?? "")";
+
+                if (showModal) {
+                    if (result === "success"){
+                        $('#MessageContent').text(resultMessage); // 將訊息顯示在 Modal 內容中
+                        var myModal = new bootstrap.Modal(document.getElementById('registrationMessageModal'));
+                        myModal.show(); // 顯示 Modal
+                    }
+                    else if (result === "fail"){
+                        $('#MessageContent').text(resultMessage); // 將訊息顯示在 Modal 內容中
+                        var myModal = new bootstrap.Modal(document.getElementById('registrationMessageModal'));
+                        myModal.show(); // 顯示 Modal
+                    }
+                }
+            }
+        })
+    </script>
+}

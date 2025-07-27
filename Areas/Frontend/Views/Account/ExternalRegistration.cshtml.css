@@ -10,7 +10,18 @@
     /* 深色文字 */
 }
 
+/* 覆寫 bootstarp btn 樣式 btn-primary btn-secondary(隱私權政策、會員條款) */
 
+.btn-primary {
+    background-color: var(--c-green2-100);
+    border-color: #e9f0e6;
+}
+
+    .btn-primary:hover {
+        background-color: #6a9955;
+        /* 滑鼠移過變成深綠色 */
+        border-color: #4a6b52;
+    }
 
 body {
     font-family: 'Noto Sans TC', '微軟正黑體', 'Microsoft JhengHei', sans-serif;
@@ -24,10 +35,6 @@ body {
     color: #333;
     /* 預設文字顏色 */
 }
-
-    body.modal-open .login-card {
-        margin-right: -14px;
-    }
 
 main {
     display: flex;

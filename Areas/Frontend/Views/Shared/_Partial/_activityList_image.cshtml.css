@@ -1,4 +1,19 @@
-﻿.activity-card-bs {
+﻿/* 覆寫 bootstrap btn */
+
+.btn-primary {
+    background-color: var(--c-green2-100);
+    border-color: var(--c-green2-100);
+}
+
+    .btn-primary:hover {
+        background-color: #5cb85c;
+        border-color: #e9f0e6;
+        /*    --bs-btn-hover-bg: #3d793d;
+        --bs-btn-active-bg: #212529;
+        --bs-btn-active-border-color: #3d793d;*/
+    }
+
+.activity-card-bs {
     border: none;
     /* 移除 Bootstrap 預設卡片邊框 */
     border-radius: 15px;

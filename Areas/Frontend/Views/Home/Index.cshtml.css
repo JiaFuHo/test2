@@ -494,6 +494,7 @@
 
 /* 調整背面卡片內容的文字樣式 */
 .flip-card-back .card-title {
+    margin-top: unset;
     margin-bottom: 0.75rem;
 }
 

@@ -8,6 +8,21 @@ body {
     background-color: #4CAF50 !important;
 }
 
+/* 覆寫 bootstrap btn */
+
+.btn-primary {
+    background-color: var(--c-green2-100);
+    border-color: var(--c-green2-100);
+}
+
+    .btn-primary:hover {
+        background-color: #5cb85c;
+        border-color: #e9f0e6;
+        /*    --bs-btn-hover-bg: #3d793d;
+        --bs-btn-active-bg: #212529;
+        --bs-btn-active-border-color: #3d793d;*/
+    }
+
 /* 搜尋區塊自訂樣式 */
 .search-section {
     /* background-color: rgba(124, 172, 124, 0.5); */
@@ -167,10 +182,9 @@ body {
 }
 
     .pagination-buttons .btn.active {
-        background-color: #dc3545;
-        /* 圖片中的橘紅色 */
+        background-color: var(--c-green2-100);
         color: white;
-        border-color: #dc3545;
+        border-color: var(--c-green2-100);
     }
 
     .pagination-buttons .btn:hover:not(.active) {

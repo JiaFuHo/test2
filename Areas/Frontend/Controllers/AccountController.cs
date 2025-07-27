@@ -253,25 +253,25 @@ public class AccountController : Controller
     /// </summary>
     /// <param name="provider">外部驗證提供者的名稱 (例如 "Google", "Facebook")</param>
     /// <returns></returns>
-    [HttpPost]
-    [Authorize] // 確保只有登入的用戶才能執行此操作
-    public IActionResult LinkExternalLogin(string provider)
-    {
-        // 建立 AuthenticationProperties 物件，指定綁定成功後要重新導向的 URI
-        // 注意：這裡的回呼 URI 需要是專門處理綁定邏輯的 Action
-        var redirectUrl = Url.Action("LinkExternalLoginCallback", "Account", new { Area = "Frontend" });
-        var properties = new AuthenticationProperties 
+        [HttpPost]
+        [Authorize] // 確保只有登入的用戶才能執行此操作
+        public IActionResult LinkExternalLogin(string provider)
         {
-            RedirectUri = redirectUrl
-        };
+            // 建立 AuthenticationProperties 物件，指定綁定成功後要重新導向的 URI
+            // 注意：這裡的回呼 URI 需要是專門處理綁定邏輯的 Action
+            var redirectUrl = Url.Action("LinkExternalLoginCallback", "Account", new { Area = "Frontend" });
+            var properties = new AuthenticationProperties 
+            {
+                RedirectUri = redirectUrl
+            };
 
-        // 把當前已登入的使用者 email 存到 properties 中，這樣回呼時才能拿到
-        properties.Items["currentLoggedInEmail"] = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? String.Empty;
+            // 把當前已登入的使用者 email 存到 properties 中，這樣回呼時才能拿到
+            properties.Items["currentLoggedInEmail"] = User.Claims.FirstOrDefault(c => c.Type == InternalClaimTypes.IAccount)?.Value ?? String.Empty;
 
-        // 觸發外部驗證流程
-        // provider 會是 "Google" 或 "Facebook"
-        return Challenge(properties, provider);
-    }
+            // 觸發外部驗證流程
+            // provider 會是 "Google" 或 "Facebook"
+            return Challenge(properties, provider);
+        }
 
     /// <summary>
     /// 處理外部登入綁定完成後的回呼
@@ -280,39 +280,55 @@ public class AccountController : Controller
     [Authorize] // 確保只有登入的用戶才能執行此操作
     public async Task<IActionResult> LinkExternalLoginCallback()
     {
+        ClaimsPrincipal principal;
+
         // 1. 嘗試取得外部登入的驗證結果
         var externalAuthResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
+        // 2. 取得當前登入的本地使用者 email (從 AuthenticationProperties 中取出)
+        string currentLoggedInEmail = externalAuthResult.Properties?.Items["currentLoggedInEmail"] ?? string.Empty;
+
+        // 3. 載入之前已登入的本地使用者物件
+        // 這裡確保我們是修改當前登入的使用者資料
+        var user = await _context.Clients.FirstOrDefaultAsync(x => x.CAccount == currentLoggedInEmail);
+
         if (!externalAuthResult.Succeeded)
         {
-            TempData["ErrorMessage"] = "外部帳號綁定失敗。";
+            TempData["Result"] = "fail";
+            TempData["ShowModal"] = true;
+            TempData["ResultMessage"] = "外部帳號綁定失敗。";
+
+            // 外部帳號綁定失敗後重新登入原本的帳號
+            principal = await _userService.CreateUserClaimsPrincipalAsync(user!);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
             return RedirectToAction("Client", "Home", new { Area = "Frontend" }); // 導回帳號管理頁面
         }
 
-        // 2. 取得外部登入的使用者身份資訊 (Claims)
+        // 4. 取得外部登入的使用者身份資訊 (Claims)
         string externalUserId = externalAuthResult.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? String.Empty;
         string externalEmail = externalAuthResult.Principal.FindFirst(ClaimTypes.Email)?.Value ?? String.Empty;
         string providerName = externalAuthResult.Properties?.Items[".AuthScheme"] ?? String.Empty;
 
-        // 3. 取得當前登入的本地使用者 email (從 AuthenticationProperties 中取出)
-        string currentLoggedInEmail = externalAuthResult.Properties?.Items["currentLoggedInEmail"] ?? string.Empty;
-
         // 檢查當前登入用戶的 Email 是否與外部驗證回傳的 Email 相符
         if (string.IsNullOrWhiteSpace(currentLoggedInEmail) || !string.Equals(currentLoggedInEmail, externalEmail, StringComparison.OrdinalIgnoreCase))
         {
-            TempData["ErrorMessage"] = "綁定失敗：外部帳號 Email 與當前登入帳號 Email 不符。";
-            // 清除外部認證資訊，避免殘留
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Client", "Home", new { Area = "Frontend" });
-        }
+            TempData["Result"] = "fail";
+            TempData["ShowModal"] = true;
+            TempData["ResultMessage"] = "綁定失敗：外部帳號 Email 與當前登入帳號 Email 不符。";
 
-        // 4. 載入之前已登入的本地使用者物件
-        // 這裡確保我們是修改當前登入的使用者資料
-        var user = await _context.Clients.FirstOrDefaultAsync(x => x.CAccount == currentLoggedInEmail);
+            // 外部帳號綁定失敗後重新登入原本的帳號
+            principal = await _userService.CreateUserClaimsPrincipalAsync(user!);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            return RedirectToAction("Client", "Home", new { Area = "Frontend" }); // 導回帳號管理頁面
+        }
 
         if (user == null)
         {
-            TempData["ErrorMessage"] = "綁定失敗：找不到當前登入的帳號。";
+            TempData["Result"] = "fail";
+            TempData["ShowModal"] = true;
+            TempData["ResultMessage"] = "綁定失敗：找不到當前登入的帳號。";
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("AccountManagement", "Account", new { Area = "Frontend" });
         }
@@ -326,12 +342,12 @@ public class AccountController : Controller
             if (!string.IsNullOrEmpty(user.GoogleId) && user.GoogleId != externalUserId)
             {
                 // 如果已經綁定過其他 Google 帳號 ID (不常見，但以防萬一)
-                TempData["ErrorMessage"] = "綁定失敗：此帳號已綁定其他 Google 帳號。";
+                TempData["ResultMessage"] = "綁定失敗：此帳號已綁定其他 Google 帳號。";
             }
             else if (user.GoogleId == externalUserId)
             {
                 // 已經綁定過同一個 Google 帳號
-                TempData["ErrorMessage"] = "您已綁定過此 Google 帳號。"; // 提示而不是錯誤
+                TempData["ResultMessage"] = "您已綁定過此 Google 帳號。"; // 提示而不是錯誤
             }
             else
             {
@@ -345,12 +361,12 @@ public class AccountController : Controller
             if (!string.IsNullOrEmpty(user.FacebookId) && user.FacebookId != externalUserId)
             {
                 // 如果已經綁定過其他 Facebook 帳號 ID
-                TempData["ErrorMessage"] = "綁定失敗：此帳號已綁定其他 Facebook 帳號。";
+                TempData["ResultMessage"] = "綁定失敗：此帳號已綁定其他 Facebook 帳號。";
             }
             else if (user.FacebookId == externalUserId)
             {
                 // 已經綁定過同一個 Facebook 帳號
-                TempData["ErrorMessage"] = "您已綁定過此 Facebook 帳號。"; // 提示而不是錯誤
+                TempData["ResultMessage"] = "您已綁定過此 Facebook 帳號。"; // 提示而不是錯誤
             }
             else
             {
@@ -361,22 +377,26 @@ public class AccountController : Controller
         }
         else
         {
-            TempData["ErrorMessage"] = $"無效的外部提供者: {providerName}。";
+            TempData["ResultMessage"] = $"無效的外部提供者: {providerName}。";
         }
 
         // 6. 儲存變更到資料庫
         if (isBindingSucceeded)
         {
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = successMessage;
         }
 
         // 清除外部認證資訊，避免殘留
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         // 重新登入
-        var principal = await _userService.CreateUserClaimsPrincipalAsync(user!);
+        principal = await _userService.CreateUserClaimsPrincipalAsync(user!);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+
+        TempData["Result"] = "success";
+        TempData["ShowModal"] = true;
+        TempData["ResultMessage"] = successMessage;
 
         // 導回帳號管理頁面
         return RedirectToAction("Client", "Home", new { Area = "Frontend" });

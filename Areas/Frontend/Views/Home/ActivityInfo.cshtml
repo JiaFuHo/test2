@@ -107,7 +107,7 @@
             @if (Model.Capacity == -1)
             {
                 <p>
-                    <strong>剩餘名額：</strong>不限制
+                    <strong>剩餘名額：</strong>無需報名
                 </p>
             }
             else if (DateTime.Now < Model.StartDate)
@@ -167,8 +167,8 @@
                     <p id="message-content"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                     <button id="redirect-btn" type="button" class="btn btn-primary">立即跳轉</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                 </div>
             </div>
         </div>
@@ -206,7 +206,7 @@
                         const capacityElement = $('.register-box p:contains("剩餘名額：")');
                         if (capacityElement.length > 0) {
                             let currentCapacityText = capacityElement.text().replace('剩餘名額：', '').trim();
-                            if (currentCapacityText !== '不限制') {
+                            if (currentCapacityText !== '無需報名') {
                                 let currentCapacity = parseInt(currentCapacityText);
                                 if (!isNaN(currentCapacity) && currentCapacity > 0) {
                                     currentCapacity--;
@@ -237,6 +237,7 @@
                             $redirectBtn.off('click').on('click', function() {
                                 window.location.href = response.redirectToLogin;
                             });
+                            $clickedBtn.prop('disabled', false).text(originalBtnText);
                         } else {
                             // 其他錯誤訊息 (名額已滿、重複報名等)
                             $redirectBtn.hide();

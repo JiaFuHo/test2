@@ -78,8 +78,8 @@
                 <p id="countdownMessage">將在 <span id="countdown">5</span> 秒後自動跳轉到登入頁面。</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                 <button id="redirect-btn" type="button" class="btn btn-primary" onclick="window.location.href='@Url.Action("Login", "Home", new { area = "Frontend" })'">立即跳轉</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
             </div>
         </div>
     </div>

@@ -35,11 +35,19 @@ namespace test2.Services
             RegisterResult result = new RegisterResult();
 
             bool isEmailRegistered = await IsEmailRegisteredAsync(email);
+            bool isPhoneRegistered = await _context.Clients.AnyAsync(c => c.CPhone == phoneNumber);
 
             if (isEmailRegistered)
             {
                 result.IsSuccess = false;
                 result.FailMessage = "電子信箱已經註冊過";
+                return result;
+            }
+
+            else if (isPhoneRegistered)
+            {
+                result.IsSuccess = false;
+                result.FailMessage = "電話號碼已經註冊過";
                 return result;
             }
 
@@ -72,6 +80,16 @@ namespace test2.Services
             RegisterResult result = new RegisterResult();
 
             // 外部登入時，會先檢查電子信箱是否存在資料庫，所以不需要再檢查電子信箱是否已註冊
+
+            // 檢查電話號碼是否已經註冊過
+            bool isPhoneRegistered = await _context.Clients.AnyAsync(c => c.CPhone == phoneNumber);
+
+            if (isPhoneRegistered)
+            {
+                result.IsSuccess = false;
+                result.FailMessage = "電話號碼已經註冊過";
+                return result;
+            }
 
             // 根據提供者建立新使用者物件
 

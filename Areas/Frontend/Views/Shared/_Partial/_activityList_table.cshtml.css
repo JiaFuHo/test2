@@ -1,4 +1,19 @@
-﻿/* 表格樣式調整 */
+﻿/* 覆寫 bootstrap btn */
+
+.btn-primary {
+    background-color: var(--c-green2-100);
+    border-color: var(--c-green2-100);
+}
+
+    .btn-primary:hover {
+        background-color: #5cb85c;
+        border-color: #e9f0e6;
+        /*    --bs-btn-hover-bg: #3d793d;
+        --bs-btn-active-bg: #212529;
+        --bs-btn-active-border-color: #3d793d;*/
+    }
+
+/* 表格樣式調整 */
 .activity-table-bs {
     width: 100%;
     border-collapse: separate; /* 為了圓角和陰影 */
